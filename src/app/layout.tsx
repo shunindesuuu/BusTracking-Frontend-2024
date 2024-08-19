@@ -21,9 +21,9 @@ export default function RootLayout({
       <html lang="en" className={`${poppins.variable}`}>
         <body className={poppins.className}>{children}
           <NavigationBar />
-          <SideBar />
         </body>
-      </html></SessionWrapper>
+      </html>
+    </SessionWrapper>
 
   );
 }
