@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--color-green: 52 199 89;
+}
+*,
+*::before,
+*::after {
+	box-sizing: "border-box";
+}
+
+* {
+	margin: "0";
+}
+
+img {
+	max-width: "100%";
+	display: "block";
+}
+
+body {
+	font-family: "Poppins", sans-serif;
+}
