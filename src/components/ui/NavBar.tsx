@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 
 import Burger from '/public/assets/ICON.png';
 import ExitBurger from '/public/assets/X_ICON.png';
 
 const NavigationBar = () => {
+    const { data: session } = useSession();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [isAnimating, setAnimating] = useState(false);
 
@@ -49,7 +51,17 @@ const NavigationBar = () => {
                             className={`flex flex-col lg:flex-row justify-start items-center transition-all duration-300 ease-in-out ${isDropdownOpen ? 'opacity-100 max-h-screen pointer-events-auto' : 'opacity-0 max-h-0 pointer-events-none'} lg:opacity-100 lg:max-h-screen lg:pointer-events-auto lg:flex w-full lg:w-auto mt-4 lg:mt-0 whitespace-nowrap`}
                             onTransitionEnd={handleTransitionEnd}
                         >
-                            
+                            {session && (
+                                <div className="flex items-center space-x-4">
+                                    <p className="text-white ml-4">Welcome, {session.user?.name || session.user?.email}</p>
+                                    <button
+                                        onClick={() => signOut()}
+                                        className="text-white ml-4 border border-white px-3 py-1 rounded hover:bg-white hover:text-[#34C759] transition duration-150"
+                                    >
+                                        Sign Out
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

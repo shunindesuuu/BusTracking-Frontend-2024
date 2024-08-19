@@ -3,6 +3,7 @@ import { poppins } from "@/styles/font";
 import "@/styles/globals.css";
 import NavigationBar from "@/components/ui/NavBar";
 import SideBar from "@/components/ui/SideBar";
+import SessionWrapper from "@/components/SessionWrapper";
 
 
 export const metadata = {
@@ -16,11 +17,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable}`}>
-      <body className={poppins.className}>{children}
-        <NavigationBar />
-        <SideBar />
-      </body>
-    </html>
+    <SessionWrapper>
+      <html lang="en" className={`${poppins.variable}`}>
+        <body className={poppins.className}>{children}
+          <NavigationBar />
+          <SideBar />
+        </body>
+      </html></SessionWrapper>
+
   );
 }
