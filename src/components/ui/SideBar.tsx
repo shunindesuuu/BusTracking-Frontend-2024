@@ -3,55 +3,56 @@ import React, { useState } from 'react';
 import menu from '../utils/menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GiHamburgerMenu } from 'react-icons/gi'; // Hamburger icon
-import { Disclosure } from '@headlessui/react'; // Disclosure component
+import { FaArrowRight } from 'react-icons/fa6';
 
 const SideBar = () => {
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isAnimating, setAnimating] = useState(false);
 
   const toggleSidebar = () => {
-    setAnimating(true);
     setSidebarOpen(!isSidebarOpen);
   };
 
-  const handleTransitionEnd = () => {
-    setAnimating(false);
-  };
-
   return (
-    <div className="relative">
-      <button className="md:hidden p-4" onClick={toggleSidebar}>
-        {isSidebarOpen ? 'Close' : 'Open'} Menu
-      </button>
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50"
+    <div className="relative flex">
+      {!isSidebarOpen && (
+        <button
+          className="md:hidden p-4 text-gray-800 z-50"
           onClick={toggleSidebar}
-        ></div>
+        >
+          <FaArrowRight className="h-6 w-6" />
+        </button>
       )}
+
+      {/* Sidebar */}
       <div
-        id="left-group"
-        className={`fixed top-0 left-0 p-10 flex flex-col w-[250px] h-full bg-white transition-transform transform ${
+        className={`fixed top-0 left-0 p-10 flex flex-col w-[250px] h-full bg-white shadow-lg transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0`}
-        onTransitionEnd={handleTransitionEnd}
+        } md:translate-x-0 md:static md:h-auto z-40`}
       >
-        <div className="flex flex-col justify-start text-base mt-16 space-y-4">
+        <div className="flex flex-col justify-start text-base mt-24 space-y-4">
           {menu.map((item) => (
             <Link
               key={item.id}
               href={item.link}
-              className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md ${
+              className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${
                 pathname === item.link ? 'bg-gray-200 text-white' : ''
               }`}
+              onClick={() => setSidebarOpen(false)} // Close sidebar on link click
             >
               {item.title}
             </Link>
           ))}
         </div>
       </div>
+
+      {/* Overlay when sidebar is open on mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={toggleSidebar} // Close sidebar when clicking on the overlay
+        />
+      )}
     </div>
   );
 };

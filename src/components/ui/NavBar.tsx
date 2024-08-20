@@ -48,7 +48,7 @@ const NavigationBar = () => {
               <Image
                 src={isDropdownOpen ? ExitBurger : Burger}
                 alt="Burger Icon"
-                className="cursor-pointer sm:w-[65px] sm:h-[53px] xsm:w-[43.33px] xsm:h-[35.33px]"
+                className="cursor-pointer sm:w-[65px] sm:h-[30px] xsm:w-[43.33px] xsm:h-[35.33px]"
               />
             </div>
           </div>
@@ -58,16 +58,6 @@ const NavigationBar = () => {
               className={`flex flex-col lg:flex-row justify-start items-center transition-all duration-300 ease-in-out ${isDropdownOpen ? 'opacity-100 max-h-screen pointer-events-auto' : 'opacity-0 max-h-0 pointer-events-none'} lg:opacity-100 lg:max-h-screen lg:pointer-events-auto lg:flex w-full lg:w-auto mt-4 lg:mt-0 whitespace-nowrap`}
               onTransitionEnd={handleTransitionEnd}
             >
-              {/* {menu.map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.link}
-                  className="nav-item px-4 py-2 text-white hover:text-[#34C759]"
-                >
-                  {item.title}
-                </Link>
-              ))} */}
-
               {session && (
                 <div className="flex items-center space-x-4">
                   <p className="text-white ml-4">
