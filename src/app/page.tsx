@@ -1,4 +1,5 @@
 import SessionHandler from "@/components/SessionHandler";
+import PassengerSidebar from "@/components/ui/PassengerSidebar";
 import React from "react";
 
 export const metadata = {
@@ -8,8 +9,10 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main>
+    <main className="flex flex-row w-full">
       {/* add sections here */}
+      <PassengerSidebar/>
+
       <SessionHandler />
     </main>
   );

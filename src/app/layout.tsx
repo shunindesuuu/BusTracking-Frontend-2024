@@ -4,6 +4,8 @@ import "@/styles/globals.css";
 import NavigationBar from "@/components/ui/NavBar";
 import SideBar from "@/components/ui/SideBar";
 import SessionWrapper from "@/components/SessionWrapper";
+import SelectComponent from "@/components/ui/SelectComponent";
+import PassengerSidebar from "@/components/ui/PassengerSidebar";
 
 
 export const metadata = {
@@ -20,6 +22,7 @@ export default function RootLayout({
     <SessionWrapper>
       <html lang="en" className={`${poppins.variable}`}>
         <body className={poppins.className}>{children}
+
           <NavigationBar />
         </body>
       </html>

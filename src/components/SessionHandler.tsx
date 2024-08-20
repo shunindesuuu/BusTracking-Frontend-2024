@@ -16,8 +16,8 @@ const SessionHandler = () => {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-center h-screen">
+    <div className="w-full">
+      <div className="flex items-center justify-center h-screen bg-slate-400">
         {!session ? (
           <Login />
         ) : (

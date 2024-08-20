@@ -5,7 +5,7 @@ const SelectComponent = () => {
   return (
     <Select.Root>
         <Select.Trigger className='' aria-label='Select Routes'>
-
+            
         </Select.Trigger>
     </Select.Root>
   )
