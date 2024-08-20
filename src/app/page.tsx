@@ -1,5 +1,5 @@
+import SessionHandler from "@/components/SessionHandler";
 import React from "react";
-import Login from "./login/page";
 
 export const metadata = {
   title: 'Bus Tracking System Using ESP32 and GPS Module',
@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main>
       {/* add sections here */}
-      <Login />
+      <SessionHandler />
     </main>
   );
 }
