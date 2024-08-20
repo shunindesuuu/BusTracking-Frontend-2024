@@ -14,10 +14,10 @@ const SideBar = () => {
   };
 
   return (
-    <div className="relative flex">
+    <div className="relative flex h-screen">
       {!isSidebarOpen && (
         <button
-          className="md:hidden p-4 text-gray-800 z-50"
+          className="md:hidden p-4 text-gray-800 z-50 absolute top-1/2 left-0 transform -translate-y-1/2"
           onClick={toggleSidebar}
         >
           <FaArrowRight className="h-6 w-6" />
@@ -26,7 +26,7 @@ const SideBar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 p-10 flex flex-col w-[250px] h-full bg-white shadow-lg transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 p-10 flex flex-col w-[250px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:static md:h-auto z-40`}
       >
