@@ -4,7 +4,6 @@ import '@/styles/globals.css';
 import NavigationBar from '@/components/ui/NavBar';
 import SideBar from '@/components/ui/SideBar';
 import SessionWrapper from '@/components/SessionWrapper';
-import RoleBasedRedirect from '@/components/RoleBasedRedirect';
 
 export const metadata = {
   title: 'Bus Tracking System Using ESP32 and GPS Module',
