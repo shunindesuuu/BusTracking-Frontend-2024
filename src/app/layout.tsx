@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import NavigationBar from '@/components/ui/NavBar';
 import SideBar from '@/components/ui/SideBar';
 import SessionWrapper from '@/components/SessionWrapper';
+import RoleBasedRedirect from '@/components/RoleBasedRedirect';
 
 export const metadata = {
   title: 'Bus Tracking System Using ESP32 and GPS Module',
@@ -20,7 +21,6 @@ export default function RootLayout({
     <SessionWrapper>
       <html lang="en" className={`${poppins.variable}`}>
         <body className={`${poppins.className} flex flex-col`}>
-          <NavigationBar />
           <div className="flex flex-row">
             <SideBar />
             <div className="flex-1">
