@@ -70,7 +70,14 @@ const NavigationBar = () => {
         className={`fixed top-0 w-full z-50 ${isDropdownOpen ? 'bg-[#34C759]' : 'bg-[#34C759]'}`}
       >
         <div className="lg:pl-5 lg:pr-5 pl-5  pr-3 flex flex-col lg:flex-row justify-between items-start">
-          <div className="w-full flex justify-between items-center">
+          <div className="w-full flex justify-start gap-4 items-center">
+          <div className="block lg:hidden" onClick={toggleDropdown}>
+              <Image
+                src={isDropdownOpen ? ExitBurger : Burger}
+                alt="Burger Icon"
+                className="cursor-pointer sm:w-[65px] sm:h-[53px] xsm:w-[43.33px] xsm:h-[35.33px]"
+              />
+            </div>
             <div className="w-[7.8125rem] py-1 flex-col justify-start items-center gap-2.5 inline-flex">
               <div className="h-[2.8125rem] justify-start items-center inline-flex relative">
                 <Link href="/">
@@ -124,13 +131,7 @@ const NavigationBar = () => {
               </div>
             </div>
 
-            <div className="block lg:hidden" onClick={toggleDropdown}>
-              <Image
-                src={isDropdownOpen ? ExitBurger : Burger}
-                alt="Burger Icon"
-                className="cursor-pointer sm:w-[65px] sm:h-[53px] xsm:w-[43.33px] xsm:h-[35.33px]"
-              />
-            </div>
+            
           </div>
         </div>
       </div>
