@@ -70,8 +70,8 @@ const NavigationBar = () => {
         className={`fixed top-0 w-full z-50 ${isDropdownOpen ? 'bg-[#34C759]' : 'bg-[#34C759]'}`}
       >
         <div className="lg:pl-5 lg:pr-5 pl-5  pr-3 flex flex-col lg:flex-row justify-between items-start">
-          <div className="w-full flex justify-start gap-4 items-center">
-          <div className="block lg:hidden" onClick={toggleDropdown}>
+          <div className="w-full flex justify-start gap-4 sm:justify-between items-center">
+            <div className="block lg:hidden" onClick={toggleDropdown}>
               <Image
                 src={isDropdownOpen ? ExitBurger : Burger}
                 alt="Burger Icon"
