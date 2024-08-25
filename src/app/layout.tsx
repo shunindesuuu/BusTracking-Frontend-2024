@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { poppins } from "@/styles/font";
-import "@/styles/globals.css";
-import NavigationBar from "@/components/ui/NavBar";
-import SideBar from "@/components/ui/SideBar";
-import SessionWrapper from "@/components/SessionWrapper";
-
+import type { Metadata } from 'next';
+import { poppins } from '@/styles/font';
+import '@/styles/globals.css';
+import NavigationBar from '@/components/ui/NavBar';
+import SideBar from '@/components/ui/SideBar';
+import SessionWrapper from '@/components/SessionWrapper';
 
 export const metadata = {
   title: 'Bus Tracking System Using ESP32 and GPS Module',
-  description: 'The project is a bus tracking system that uses an ESP32 and a GPS module to track the location of a bus in real-time.',
+  description:
+    'The project is a bus tracking system that uses an ESP32 and a GPS module to track the location of a bus in real-time.',
 };
 
 export default function RootLayout({
@@ -19,11 +19,15 @@ export default function RootLayout({
   return (
     <SessionWrapper>
       <html lang="en" className={`${poppins.variable}`}>
-        <body className={poppins.className}>{children}
-          <NavigationBar />
+        <body className={`${poppins.className} flex flex-col`}>
+          <div className="flex flex-row">
+            <SideBar />
+            <div className="flex-1">
+              <main>{children}</main>
+            </div>
+          </div>
         </body>
       </html>
     </SessionWrapper>
-
   );
 }
