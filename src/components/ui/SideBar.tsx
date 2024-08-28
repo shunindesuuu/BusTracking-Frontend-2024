@@ -8,6 +8,7 @@ import { PiSignOutBold } from 'react-icons/pi';
 import ProtectedComponent from './ProtectedComponent';
 import NavigationBar from './NavBar';
 import SelectComponent from './SelectComponent';
+import ProgressBar from './ProgessBar';
 
 const SideBar = () => {
   const { data: session } = useSession();
@@ -47,7 +48,7 @@ const SideBar = () => {
             </ProtectedComponent>
 
             <ProtectedComponent blockedRoles={['admin']}>
-              <div className="flex flex-col justify-start text-base mt-16 space-y-4 w-full">
+              <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 space-y-4 w-full">
                 <p className="">Routes</p>
                 <SelectComponent />
 
@@ -67,15 +68,15 @@ const SideBar = () => {
                       <p className="text-sm ">Taken: 30</p>
                       <p className="text-sm">Available: 20</p>
                     </div>
-                    {/* <div className="flex flex-col justify-center align-middle h-1/2 p-2">
-                      <ProgressDemo />
+                    <ProgressBar/>
+                    <div className="flex flex-col justify-center align-middle h-1/2 p-2">
                       <div className="flex text-xs justify-between">
                         <p>ADDU</p>
                         <p>GMALL</p>
                         <p>VPLAZA</p>
                         <p>ABRZA</p>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
