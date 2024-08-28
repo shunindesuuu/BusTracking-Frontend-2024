@@ -42,6 +42,12 @@ const SideBar = () => {
                 ))}
               </div>
             </ProtectedComponent>
+            
+            <ProtectedComponent blockedRoles={['admin']}>
+              <div className="flex flex-col justify-start text-base mt-24 space-y-4">
+                hello user
+              </div>
+            </ProtectedComponent>
             {session && (
               <div className="flex flex-col mt-auto">
                 <p className="text-black border-">
