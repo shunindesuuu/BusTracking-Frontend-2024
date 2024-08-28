@@ -1,5 +1,8 @@
 import SessionHandler from "@/components/SessionHandler";
+import DisplayMap from "@/components/ui/DisplayMap";
 import DrawRoute from "@/components/ui/DrawRoute";
+import ProtectedComponent from "@/components/ui/ProtectedComponent";
+
 import React from "react";
 
 export const metadata = {
@@ -8,11 +11,12 @@ export const metadata = {
 };
 
 export default function Home() {
+
   return (
     <main>
       {/* add sections here */}
       {/* <SessionHandler /> */}
-      <DrawRoute/>
+      <DisplayMap/> 
     </main>
   );
 }

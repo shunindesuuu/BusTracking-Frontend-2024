@@ -20,7 +20,7 @@ const SideBar = () => {
   };
 
   return (
-    <div>
+    <div className='z-[500]'>
       <ProtectedComponent blockedRoles={['admin, user']}>
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">

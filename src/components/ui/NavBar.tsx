@@ -18,7 +18,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ toggleSidebar }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative z-[500]">
       <div className="fixed top-0 w-full z-50 bg-[#34C759]">
         <div className="p-5 flex justify-between items-center">
           {/* Container for Burger Icon and Title */}
