@@ -1,4 +1,5 @@
 import SessionHandler from "@/components/SessionHandler";
+import DrawRoute from "@/components/ui/DrawRoute";
 import React from "react";
 
 export const metadata = {
@@ -10,7 +11,8 @@ export default function Home() {
   return (
     <main>
       {/* add sections here */}
-      <SessionHandler />
+      {/* <SessionHandler /> */}
+      <DrawRoute/>
     </main>
   );
 }
