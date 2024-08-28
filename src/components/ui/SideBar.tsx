@@ -7,6 +7,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { PiSignOutBold } from "react-icons/pi";
 import ProtectedComponent from './ProtectedComponent';
 import NavigationBar from './NavBar';
+import SelectComponent from './SelectComponent';
 
 const SideBar = () => {
   const { data: session } = useSession();
@@ -45,7 +46,7 @@ const SideBar = () => {
             
             <ProtectedComponent blockedRoles={['admin']}>
               <div className="flex flex-col justify-start text-base mt-24 space-y-4">
-                hello user
+                <SelectComponent/>
               </div>
             </ProtectedComponent>
             {session && (

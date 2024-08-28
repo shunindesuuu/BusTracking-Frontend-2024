@@ -23,3 +23,8 @@ img {
 body {
   font-family: 'Poppins', sans-serif;
 }
+/* styles.css */
+.SelectContent {
+  width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+}
