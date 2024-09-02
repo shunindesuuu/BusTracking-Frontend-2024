@@ -1,53 +1,88 @@
 'use client';
-import React from 'react';
-import { useEffect, useState } from 'react';
-import L from 'leaflet';
+import React, { useEffect } from 'react';
+import L, { Map, LocationEvent, ErrorEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const DisplayMap = () => {
+const DisplayMap: React.FC = () => {
   useEffect(() => {
-    const map = L.map('map').setView([7.072093, 125.612058], 13);
+    const mapContainer = document.getElementById('map') as HTMLDivElement;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
-
-    const mapContainer = document.getElementById('map');
     if (mapContainer) {
-      // Default cursor to pointer
+      // Initialize the map only if the container is available
+      const map: Map = L.map(mapContainer).setView([51.505, -0.09], 13); // Fallback coordinates
+
+      // Use geolocation to set view on the current location
+      map.locate({
+        setView: true,
+        maxZoom: 15,
+        enableHighAccuracy: true,
+        timeout: 10000,
+      });
+
+      // Add OpenStreetMap tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      // Handle location found event to place a circle with a popup
+      map.on('locationfound', (e: LocationEvent) => {
+        const radius = e.accuracy / 2; // Calculate the radius of the circle
+
+        // Create a circle
+        const circle = L.circle(e.latlng, {
+          radius: radius,
+          color: 'blue',
+          fillColor: 'blue',
+          fillOpacity: 0.2,
+        }).addTo(map);
+
+        // Bind a popup to the circle
+        circle.bindPopup(`You are within ${radius} meters from this point`);
+      });
+
+      // Handle cursor change events
       mapContainer.style.cursor = 'default';
 
-      // When the map starts being dragged, change to 'grabbing'
-      map.on('dragstart', () => {
-        mapContainer.style.cursor = 'grabbing';
-      });
-
-      // When the map is being dragged, change the cursor to 'grabbing'
-      map.on('drag', () => {
-        mapContainer.style.cursor = 'grabbing';
-      });
-
-      // When dragging ends, reset to pointer
-      map.on('dragend', () => {
-        mapContainer.style.cursor = 'default';
-      });
-
-      // When hovering over the map, change to 'grab'
       map.on('mouseover', () => {
         mapContainer.style.cursor = 'grab';
       });
 
-      // Reset to pointer when not hovering over the map
+      map.on('dragstart', () => {
+        mapContainer.style.cursor = 'grabbing';
+      });
+
+      map.on('dragend', () => {
+        mapContainer.style.cursor = 'grab';
+      });
+
       map.on('mouseout', () => {
         mapContainer.style.cursor = 'default';
       });
-    }
 
-    return () => {
-      map.remove();
-    };
+      
+
+      // Handle location errors
+      map.on('locationerror', (e: ErrorEvent) => {
+        if (e.code === 1) {
+          alert('Location access denied by the user.');
+        } else if (e.code === 2) {
+          alert('Location position unavailable.');
+        } else if (e.code === 3) {
+          alert('Location request timeout. Please try again.');
+        } else {
+          alert('An unknown error occurred.');
+        }
+      });
+
+      // Cleanup on unmount
+      return () => {
+        map.off();
+        map.remove();
+      };
+    }
   }, []);
+
   return (
     <div
       id="map"
