@@ -12,14 +12,14 @@ export const authOptions: NextAuthOptions = {
         async session({ session }) {
             if (session.user) {
                 session.user.role =
-                    ["paololuisramirez@gmail.com", "mecasilum@addu.edu.ph"].includes(session.user.email!)
+                    ["paololuisramirez@gmail.com", "mecasilum@addu.edu.ph", "sevchavez@addu.edu.ph"].includes(session.user.email!)
                         ? "admin"
                         : "user";
             }
             return session;
         },
         async signIn({ user, profile }) {
-            if (["paololuisramirez@gmail.com", "mecasilum@addu.edu.ph"].includes(profile?.email!)) {
+            if (["paololuisramirez@gmail.com", "mecasilum@addu.edu.ph", "sevchavez@addu.edu.ph"].includes(profile?.email!)) {
                 user.role = "admin";
             } else {
                 user.role = "user";
