@@ -12,14 +12,14 @@ export const authOptions: NextAuthOptions = {
         async session({ session }) {
             if (session.user) {
                 session.user.role =
-                    session.user.email === "paololuisramirez@gmail.com"
+                    ["paololuisramirez@gmail.com", "mecasilum@addu.edu.ph"].includes(session.user.email!)
                         ? "admin"
                         : "user";
             }
             return session;
         },
         async signIn({ user, profile }) {
-            if (profile?.email === "paololuisramirez@gmail.com") {
+            if (["paololuisramirez@gmail.com", "mecasilum@addu.edu.ph"].includes(profile?.email!)) {
                 user.role = "admin";
             } else {
                 user.role = "user";
@@ -28,5 +28,3 @@ export const authOptions: NextAuthOptions = {
         },
     },
 };
-
-
