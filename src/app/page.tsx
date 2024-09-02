@@ -16,6 +16,7 @@ export default function Home() {
     <main>
       {/* add sections here */}
       {/* <SessionHandler /> */}
+      {/* <DrawRoute/> */}
       <DisplayMap/> 
     </main>
   );
