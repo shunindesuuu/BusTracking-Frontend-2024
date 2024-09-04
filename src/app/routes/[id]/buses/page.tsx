@@ -27,7 +27,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex justify-center container mx-auto mt-24 ">
+    <div className="flex justify-center container mx-auto mt-20 p-4 ">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-100">
           <tr>

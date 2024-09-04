@@ -32,7 +32,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-col justify-start container mx-auto mt-24">
+    <div className="flex flex-col justify-start container mx-auto mt-16 p-4">
      <div className='flex'>
         <p>Route {routeId}/</p>
         <p>Bus {busDetails.busNumber}</p>

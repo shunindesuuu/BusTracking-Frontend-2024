@@ -12,7 +12,7 @@ const page = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center container mx-auto mt-20">
+    <div className="flex flex-col justify-center container mx-auto mt-16 p-5">
       <div>Route {id}</div>
       <div className="flex justify-center container mx-auto gap-4 mt-3">
       <Link
