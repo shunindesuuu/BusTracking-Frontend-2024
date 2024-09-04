@@ -11,7 +11,7 @@ const Buses: React.FC = () => {
     <div className="flex justify-center container mx-auto mt-20 p-4 gap-4">
         {routes.map((route)=>(
             <Link
-            id={route.id}
+            key={route.id}  // Adding the key prop here
             href={`/routes/${route.id}`}
             className="flex-grow h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all"
           >

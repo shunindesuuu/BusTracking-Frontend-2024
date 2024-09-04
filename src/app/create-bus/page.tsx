@@ -106,7 +106,7 @@ const CreateBus: React.FC = () => {
             </button>
           </div>
           {showDrawRoute && <DrawRoute />}
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 mt-4">
             <button
               type="button"
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
