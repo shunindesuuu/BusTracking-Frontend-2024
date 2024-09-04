@@ -2,6 +2,7 @@
 import DrawRoute from '@/components/ui/DrawRoute';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ProtectedComponent from '@/components/ui/ProtectedComponent';
 
 const CreateBus: React.FC = () => {
   const [showDrawRoute, setShowDrawRoute] = useState(false);
@@ -16,6 +17,7 @@ const CreateBus: React.FC = () => {
   };
 
   return (
+    <ProtectedComponent blockedRoles={['admin']}>
     <div className="container mx-auto mt-20 p-4">
       <div className="bg-white shadow-md rounded-lg w-full p-4">
         <div className="bg-green-500 text-white text-center text-lg font-semibold py-4 rounded-t-lg ">
@@ -124,6 +126,7 @@ const CreateBus: React.FC = () => {
         </form>
       </div>
     </div>
+    </ProtectedComponent>
   );
 };
 
