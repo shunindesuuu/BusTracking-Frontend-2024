@@ -15,7 +15,7 @@ const DrawRoute = () => {
 
     const latlngs: LatLngExpression[] = [];
 
-    const polyline = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+    const polyline = L.polyline(latlngs, { color: 'lightgreen' }).addTo(map);
 
     map.on('click', function (e) {
       const { lat, lng } = e.latlng;
@@ -26,6 +26,27 @@ const DrawRoute = () => {
 
       console.log(latlngs);
     });
+
+    // Set cursor to default (black arrow) when map is idle
+    document.getElementById('map')!.style.cursor = 'default';
+
+    // Change cursor when dragging
+    map.on('mousedown', () => {
+      document.getElementById('map')!.style.cursor = 'grabbing';
+    });
+
+    map.on('mouseup', () => {
+      document.getElementById('map')!.style.cursor = 'default';
+    });
+
+    map.on('dragstart', () => {
+      document.getElementById('map')!.style.cursor = 'grabbing';
+    });
+
+    map.on('dragend', () => {
+      document.getElementById('map')!.style.cursor = 'default';
+    });
+
 
     return () => {
       map.remove();
