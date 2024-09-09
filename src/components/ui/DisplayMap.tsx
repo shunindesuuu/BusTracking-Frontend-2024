@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const DisplayMap = () => {
+  
   useEffect(() => {
     const map = L.map('map').setView([7.072093, 125.612058], 13);
 
