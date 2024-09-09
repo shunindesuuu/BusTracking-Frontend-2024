@@ -44,8 +44,6 @@ interface SelectComponentProps {
 
 const SelectComponent: React.FC<SelectComponentProps> = ({ routes }) => {
   const sortedRoutes = [...routes].sort((a, b) => a.routeName.localeCompare(b.routeName));
-
-  {console.log(routes)}
   return (
     <Select.Root>
     <Select.Trigger

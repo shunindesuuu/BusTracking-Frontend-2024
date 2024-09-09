@@ -5,7 +5,42 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const DisplayMap = () => {
+
+  interface Coordinate {
+    latitude: number;
+    longitude: number;
+  }
   
+  interface RouteNames {
+    id: number;
+    routeName: string;
+    routeColor: string;
+    coordinates: Coordinate[];  // Use Coordinate array for lat/long pairs
+  }
+
+  const [routes, setRoutes] = useState<RouteNames[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/routes/index/coordinates');  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: RouteNames[] = await response.json();
+        setRoutes(result); 
+      } catch (error) {
+        setError((error as Error).message);  
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoutes();  
+  }, []);
+
   useEffect(() => {
     const map = L.map('map').setView([7.072093, 125.612058], 13);
 
@@ -13,6 +48,12 @@ const DisplayMap = () => {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
+
+    routes.forEach(route => {
+      const latLngs = route.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
+      console.log(latLngs )
+      L.polyline(latLngs, { color: route.routeColor }).addTo(map);
+    });
 
     const mapContainer = document.getElementById('map');
     if (mapContainer) {
@@ -48,7 +89,7 @@ const DisplayMap = () => {
     return () => {
       map.remove();
     };
-  }, []);
+  }, [routes]);
   return (
     <div
       id="map"
