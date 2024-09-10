@@ -8,6 +8,12 @@ import {
   ChevronUpIcon,
 } from '@radix-ui/react-icons';
 
+interface RouteNames {
+  id: number;
+  routeName: string;
+  routeColor: string;
+}
+
 type SelectItemProps = {
   children: React.ReactNode;
   className?: string;
@@ -31,7 +37,13 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
     );
   }
 );
-const SelectComponent = () => {
+
+interface SelectComponentProps {
+  routes: RouteNames[];
+}
+
+const SelectComponent: React.FC<SelectComponentProps> = ({ routes }) => {
+  const sortedRoutes = [...routes].sort((a, b) => a.routeName.localeCompare(b.routeName));
   return (
     <Select.Root>
     <Select.Trigger
@@ -56,10 +68,12 @@ const SelectComponent = () => {
 
         <Select.Viewport className="p-[5px] rounded-sm z-50">
           <Select.Group>
-          <SelectItem value="all" >All</SelectItem>
-            <SelectItem value="route1" >Route 1</SelectItem>
-            <SelectItem value="route2">Route 2</SelectItem>
-            <SelectItem value="route3">Route 3</SelectItem>
+              <SelectItem value="all" >All</SelectItem>
+              {sortedRoutes.map((route) => (
+                <SelectItem key={route.id} value={route.routeName}>
+                 {route.routeName}
+                </SelectItem>
+              ))}
           </Select.Group>
 
         </Select.Viewport>

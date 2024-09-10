@@ -10,7 +10,9 @@ const Buses: React.FC = () => {
 
   return (
     <ProtectedComponent blockedRoles={['user']}>
-      <div className="flex justify-center container mx-auto mt-20 p-4 gap-4">
+      <div className="flex  flex-col justify-center container mx-auto mt-16 p-4 gap-4">
+        <Link id='createbutton' href={`/routes/create`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit p-2 rounded-md'>Create Route</Link>
+        <div className='flex gap-4'>
         {routes.map((route) => (
           <Link
             key={route.id}  // Adding the key prop here
@@ -20,6 +22,7 @@ const Buses: React.FC = () => {
             {route.routeName}
           </Link>
         ))}
+        </div>
       </div>
     </ProtectedComponent>
   );
