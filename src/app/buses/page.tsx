@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const Buses: React.FC = () => {
   return (
-    <ProtectedComponent blockedRoles={['admin']}>
+    <ProtectedComponent blockedRoles={['user']}>
       <div className="flex justify-center container mx-auto mt-20 p-4 gap-4">
         <Link
           href="/buses-view-buses"

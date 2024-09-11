@@ -10,7 +10,7 @@ const BusesViewBuses: React.FC = () => {
     router.push('/buses');
   };
   return (
-    <ProtectedComponent blockedRoles={['admin']}>
+    <ProtectedComponent blockedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
         <button
           type="button"
