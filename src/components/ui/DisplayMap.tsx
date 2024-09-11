@@ -54,31 +54,15 @@ const DisplayMap = () => {
         }).addTo(map);
 
         mapRef.current = map; // Store the map instance in the ref
+  
+        // Set cursor styles
+        document.getElementById('map')!.style.cursor = 'default';
+        map.on('mousedown', () => document.getElementById('map')!.style.cursor = 'grabbing');
+        map.on('mouseup', () => document.getElementById('map')!.style.cursor = 'default');
+        map.on('dragstart', () => document.getElementById('map')!.style.cursor = 'grabbing');
+        map.on('dragend', () => document.getElementById('map')!.style.cursor = 'default');
 
-        const mapContainer = document.getElementById('map');
-        if (mapContainer) {
-          mapContainer.style.cursor = 'default';
-
-          map.on('dragstart', () => {
-            mapContainer.style.cursor = 'grabbing';
-          });
-
-          map.on('drag', () => {
-            mapContainer.style.cursor = 'grabbing';
-          });
-
-          map.on('dragend', () => {
-            mapContainer.style.cursor = 'default';
-          });
-
-          map.on('mouseover', () => {
-            mapContainer.style.cursor = 'grab';
-          });
-
-          map.on('mouseout', () => {
-            mapContainer.style.cursor = 'default';
-          });
-        }
+        
       }
 
       // Add routes to the map
