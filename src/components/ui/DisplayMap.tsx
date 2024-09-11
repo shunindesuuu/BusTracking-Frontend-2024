@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -10,7 +9,7 @@ const DisplayMap = () => {
     latitude: number;
     longitude: number;
   }
-  
+
   interface RouteNames {
     id: number;
     routeName: string;
@@ -20,76 +19,105 @@ const DisplayMap = () => {
 
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const mapRef = useRef<L.Map | null>(null); // Ref to store the map instance
 
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch('http://localhost:4000/routes/index/coordinates');  
+        const response = await fetch('http://localhost:4000/routes/index/coordinates');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const result: RouteNames[] = await response.json();
-        setRoutes(result); 
+        setRoutes(result);
       } catch (error) {
-        setError((error as Error).message);  
+        setError((error as Error).message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRoutes();  
+    fetchRoutes();
   }, []);
 
   useEffect(() => {
-    const map = L.map('map').setView([7.072093, 125.612058], 13);
+    const initMap = (lat: number, lng: number, zoom: number) => {
+      if (!mapRef.current) {
+        // Only initialize the map if it hasn't been initialized already
+        const map = L.map('map').setView([lat, lng], zoom);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
 
-    routes.forEach(route => {
-      const latLngs = route.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
-      console.log(latLngs )
-      L.polyline(latLngs, { color: route.routeColor }).addTo(map);
-    });
+        mapRef.current = map; // Store the map instance in the ref
 
-    const mapContainer = document.getElementById('map');
-    if (mapContainer) {
-      // Default cursor to pointer
-      mapContainer.style.cursor = 'default';
+        const mapContainer = document.getElementById('map');
+        if (mapContainer) {
+          mapContainer.style.cursor = 'default';
 
-      // When the map starts being dragged, change to 'grabbing'
-      map.on('dragstart', () => {
-        mapContainer.style.cursor = 'grabbing';
+          map.on('dragstart', () => {
+            mapContainer.style.cursor = 'grabbing';
+          });
+
+          map.on('drag', () => {
+            mapContainer.style.cursor = 'grabbing';
+          });
+
+          map.on('dragend', () => {
+            mapContainer.style.cursor = 'default';
+          });
+
+          map.on('mouseover', () => {
+            mapContainer.style.cursor = 'grab';
+          });
+
+          map.on('mouseout', () => {
+            mapContainer.style.cursor = 'default';
+          });
+        }
+      }
+
+      // Add routes to the map
+      routes.forEach(route => {
+        const latLngs = route.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
+        L.polyline(latLngs, { color: route.routeColor }).addTo(mapRef.current!);
       });
-
-      // When the map is being dragged, change the cursor to 'grabbing'
-      map.on('drag', () => {
-        mapContainer.style.cursor = 'grabbing';
-      });
-
-      // When dragging ends, reset to pointer
-      map.on('dragend', () => {
-        mapContainer.style.cursor = 'default';
-      });
-
-      // When hovering over the map, change to 'grab'
-      map.on('mouseover', () => {
-        mapContainer.style.cursor = 'grab';
-      });
-
-      // Reset to pointer when not hovering over the map
-      map.on('mouseout', () => {
-        mapContainer.style.cursor = 'default';
-      });
-    }
-
-    return () => {
-      map.remove();
     };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+
+          // Initialize map at user location with zoom 16
+          initMap(latitude, longitude, 16);
+
+          // Add a circle marker at user's location
+          if (mapRef.current) {
+            L.circleMarker([latitude, longitude], {
+              radius: 10,
+              color: '#3388ff',
+              fillColor: '#3388ff',
+              fillOpacity: 0.5,
+            }).addTo(mapRef.current).bindPopup('You are here');
+          }
+        },
+        () => {
+          // Fallback if location access is denied
+          initMap(7.072093, 125.612058, 13); // Default location with zoom 13
+        }
+      );
+    } else {
+      // If geolocation is not supported
+      initMap(7.072093, 125.612058, 13); // Default location with zoom 13
+    }
   }, [routes]);
+
   return (
     <div
       id="map"
