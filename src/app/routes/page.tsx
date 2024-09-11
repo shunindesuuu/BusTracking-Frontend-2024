@@ -1,12 +1,38 @@
+"use client"
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 const Buses: React.FC = () => {
-  let routes: { id: string, routeName: string }[] = [
-    { id: "111111", routeName: "Route 1" },
-    { id: "222222", routeName: "Route 2" },
-    { id: "333333", routeName: "Route 3" }
-  ]
+  //get route name
+  interface RouteNames {
+    id: number;
+    routeName: string;
+    routeColor: string;
+  }
+
+  const [routes, setRoutes] = useState<RouteNames[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/routes/index');  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: RouteNames[] = await response.json();
+        setRoutes(result); 
+      } catch (error) {
+        setError((error as Error).message);  
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoutes();  
+  }, []);
 
   return (
     <ProtectedComponent blockedRoles={['user']}>
