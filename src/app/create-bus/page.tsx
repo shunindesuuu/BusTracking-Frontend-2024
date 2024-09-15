@@ -109,7 +109,6 @@ const CreateBus: React.FC = () => {
       busNumber,
       capacity,
       status,
-      // Commented out driverId
       // driverId: selectedDriver ? selectedDriver.id : null,
       routeId: selectedRoute ? selectedRoute.id : null,
     };
