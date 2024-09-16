@@ -9,20 +9,17 @@ interface RouteNames {
   routeName: string;
 }
 
-// Commented out Driver interface
-// interface Driver {
-//   id: string;
-//   name: string;
-// }
+interface Driver {
+  id: string;
+  name: string;
+}
 
 const CreateBus: React.FC = () => {
   const [routes, setRoutes] = useState<RouteNames[]>([]);
-  // Commented out drivers state
-  // const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
 
   const [isRouteOpen, setIsRouteOpen] = useState(false);
-  // Commented out isDriverOpen state
-  // const [isDriverOpen, setIsDriverOpen] = useState(false);
+  const [isDriverOpen, setIsDriverOpen] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,8 +27,11 @@ const CreateBus: React.FC = () => {
     id: string;
     name: string;
   } | null>(null);
-  // Commented out selectedDriver state
-  // const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+
+  const [selectedDriver, setSelectedDriver] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // State for bus details
   const [busName, setBusName] = useState('');
@@ -49,21 +49,19 @@ const CreateBus: React.FC = () => {
     setIsRouteOpen(!isRouteOpen);
   };
 
-  // Commented out handleDriverButtonClick
-  // const handleDriverButtonClick = () => {
-  //   setIsDriverOpen(!isDriverOpen);
-  // };
+  const handleDriverButtonClick = () => {
+    setIsDriverOpen(!isDriverOpen);
+  };
 
   const handleRouteSelect = (route: RouteNames) => {
     setSelectedRoute({ id: route.id, name: route.routeName });
     setIsRouteOpen(false);
   };
 
-  // Commented out handleDriverSelect
-  // const handleDriverSelect = (driver: Driver) => {
-  //   setSelectedDriver(driver);
-  //   setIsDriverOpen(false);
-  // };
+  const handleDriverSelect = (driver: Driver) => {
+    setSelectedDriver(driver);
+    setIsDriverOpen(false);
+  };
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -81,23 +79,21 @@ const CreateBus: React.FC = () => {
       }
     };
 
-    // Commented out fetchDrivers function
-    // const fetchDrivers = async () => {
-    //   try {
-    //     const response = await fetch('http://localhost:4000/drivers/index');
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     const result: Driver[] = await response.json();
-    //     setDrivers(result);
-    //   } catch (error) {
-    //     setError((error as Error).message);
-    //   }
-    // };
+    const fetchDrivers = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/drivers/index');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: Driver[] = await response.json();
+        setDrivers(result);
+      } catch (error) {
+        setError((error as Error).message);
+      }
+    };
 
     fetchRoutes();
-    // Commented out fetchDrivers call
-    // fetchDrivers();
+    fetchDrivers();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -109,7 +105,7 @@ const CreateBus: React.FC = () => {
       busNumber,
       capacity,
       status,
-      // driverId: selectedDriver ? selectedDriver.id : null,
+      driverId: selectedDriver ? selectedDriver.id : null,
       routeId: selectedRoute ? selectedRoute.id : null,
     };
 
@@ -132,8 +128,7 @@ const CreateBus: React.FC = () => {
       setCapacity('');
       setStatus('');
       setSelectedRoute(null);
-      // Commented out setSelectedDriver
-      // setSelectedDriver(null);
+      setSelectedDriver(null);
       alert('Bus created successfully!');
       router.push('/buses'); // Redirect to buses page after successful creation
     } catch (error) {
@@ -262,6 +257,56 @@ const CreateBus: React.FC = () => {
               {selectedRoute && (
                 <div className="mt-2 text-gray-700">
                   Selected Route: {selectedRoute.name} (ID: {selectedRoute.id})
+                </div>
+              )}
+            </div>
+
+            {/* Driver Selection */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Add Driver
+              </label>
+              <div className="relative inline-block text-left">
+                <button
+                  type="button"
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  onClick={handleDriverButtonClick}
+                >
+                  {selectedDriver ? selectedDriver.name : 'Select Driver'}
+                </button>
+
+                {isDriverOpen && (
+                  <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="py-1">
+                      {loading && (
+                        <div className="px-4 py-2 text-sm text-gray-700">
+                          Loading...
+                        </div>
+                      )}
+                      {error && (
+                        <div className="px-4 py-2 text-sm text-red-600">
+                          {error}
+                        </div>
+                      )}
+                      {!loading &&
+                        !error &&
+                        drivers.map((driver) => (
+                          <div
+                            key={driver.id}
+                            onClick={() => handleDriverSelect(driver)}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                          >
+                            {driver.name}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              {selectedDriver && (
+                <div className="mt-2 text-gray-700">
+                  Selected Driver: {selectedDriver.name} (ID:{' '}
+                  {selectedDriver.id})
                 </div>
               )}
             </div>
