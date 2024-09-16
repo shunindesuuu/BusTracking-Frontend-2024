@@ -8,7 +8,9 @@ interface Bus {
   busNumber: string;
   busName: string; // Added busName property
   capacity: number;
-  passengerCount: number;
+  _count: {
+    passengers: number; // Add the passenger count from Prisma
+  };
   driver: string;
   status: string;
 }
@@ -23,23 +25,32 @@ const BusesViewBuses: React.FC = () => {
     router.push('/buses');
   };
 
-  useEffect(() => {
-    const fetchBuses = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/buses/index'); // Adjust the endpoint as needed
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result: Bus[] = await response.json();
-        setBuses(result);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
+  const fetchBuses = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/buses/index'); // Adjust the endpoint as needed
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
+      const result: Bus[] = await response.json();
+      setBuses(result);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchBuses();
+  // Polling logic
+  useEffect(() => {
+    setLoading(true); // Show loading initially
+
+    fetchBuses(); // Initial fetch
+
+    const interval = setInterval(() => {
+      fetchBuses(); // Fetch updated bus data every 5 seconds (5000 ms)
+    }, 1000);
+
+    return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, []);
 
   if (loading) return <div>Loading...</div>;
@@ -104,7 +115,7 @@ const BusesViewBuses: React.FC = () => {
                     {bus.capacity}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {bus.passengerCount}
+                    {bus._count.passengers}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {bus.driver}
