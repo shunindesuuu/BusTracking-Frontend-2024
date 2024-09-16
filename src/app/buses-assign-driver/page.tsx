@@ -1,24 +1,78 @@
 'use client';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  status: string;
+  bus: {
+    id: string;
+    busName: string;
+    busNumber: string;
+    capacity: string;
+    status: string;
+  };
+}
 
 const BusesAssignDriver: React.FC = () => {
   const router = useRouter();
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleBackClick = () => {
     router.push('/buses');
   };
+
+  const handleCreateClick = () => {
+    router.push('/buses-create-driver'); // Redirects to the create driver page
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/drivers/index'); // Adjust the endpoint as needed
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const driversResult: Driver[] = await response.json();
+        setDrivers(driversResult);
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <ProtectedComponent blockedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
-        <button
-          type="button"
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={handleBackClick}
-        >
-          Back
-        </button>
+        <div className="flex justify-between mb-4">
+          <button
+            type="button"
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            onClick={handleBackClick}
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            onClick={handleCreateClick}
+          >
+            Create Driver
+          </button>
+        </div>
+
         <div className="bg-white shadow-md rounded-lg w-full p-4">
           <table
             className="min-w-full leading-normal border-2 border-gray-100"
@@ -47,66 +101,28 @@ const BusesAssignDriver: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white">
-              <tr>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  1
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  John Doe
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Route A
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Bus 101
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Active
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Edit | Delete
-                </td>
-              </tr>
-              <tr>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  2
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Jane Smith
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Route B
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Bus 102
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Inactive
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Edit | Delete
-                </td>
-              </tr>
-              <tr>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  3
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Sam Wilson
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Route C
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Bus 103
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Active
-                </td>
-                <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                  Edit | Delete
-                </td>
-              </tr>
+              {drivers.map((driver, index) => (
+                <tr key={driver.id}>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    {index + 1}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    {driver.name}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    {driver.bus.busName}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    {driver.bus.busNumber}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    {driver.status}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    Edit | Delete
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
