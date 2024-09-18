@@ -186,7 +186,7 @@ const CreateBus: React.FC = () => {
                 Capacity
               </label>
               <input
-                type="text"
+                type="number"
                 id="capacity"
                 name="capacity"
                 value={capacity}

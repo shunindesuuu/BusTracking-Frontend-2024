@@ -110,16 +110,13 @@ const BusesAssignDriver: React.FC = () => {
                     {driver.name}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.bus.busName}
+                    {driver.bus ? driver.bus.busName : 'N/A'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.bus.busNumber}
+                    {driver.bus ? driver.bus.busNumber : 'N/A'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.status}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    Edit | Delete
+                    {driver.bus ? driver.bus.status : 'N/A'}
                   </td>
                 </tr>
               ))}
