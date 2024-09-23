@@ -18,7 +18,9 @@ const CreateDriver: React.FC = () => {
     name: string;
   } | null>(null);
 
-  const [driverName, setDriverName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [middleName, setMiddleName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [status, setStatus] = useState('');
 
@@ -56,7 +58,9 @@ const CreateDriver: React.FC = () => {
     e.preventDefault();
 
     const driverData = {
-      name: driverName,
+      firstName,
+      middleName,
+      lastName,
       phone,
       status,
       busId: selectedBus ? selectedBus.id : null,
@@ -75,7 +79,9 @@ const CreateDriver: React.FC = () => {
         throw new Error('Failed to create driver');
       }
 
-      setDriverName('');
+      setFirstName('');
+      setMiddleName('');
+      setLastName('');
       setPhone('');
       setStatus('');
       setSelectedBus(null);
@@ -97,16 +103,50 @@ const CreateDriver: React.FC = () => {
             <div className="mb-4 mt-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
+                htmlFor="firstName"
               >
-                Name
+                First Name
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={driverName}
-                onChange={(e) => setDriverName(e.target.value)}
+                id="firstName"
+                name="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="middleName"
+              >
+                Middle Name
+              </label>
+              <input
+                type="text"
+                id="middleName"
+                name="middleName"
+                value={middleName}
+                onChange={(e) => setMiddleName(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="lastName"
+              >
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
@@ -145,6 +185,7 @@ const CreateDriver: React.FC = () => {
               />
             </div>
 
+            {/* Bus Selection */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Assign Bus

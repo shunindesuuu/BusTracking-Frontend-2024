@@ -11,7 +11,9 @@ interface RouteNames {
 
 interface Driver {
   id: string;
-  name: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
 }
 
 const CreateBus: React.FC = () => {
@@ -28,10 +30,7 @@ const CreateBus: React.FC = () => {
     name: string;
   } | null>(null);
 
-  const [selectedDriver, setSelectedDriver] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
 
   // State for bus details
   const [busName, setBusName] = useState('');
@@ -260,7 +259,6 @@ const CreateBus: React.FC = () => {
                 </div>
               )}
             </div>
-
             {/* Driver Selection */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -272,7 +270,9 @@ const CreateBus: React.FC = () => {
                   className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   onClick={handleDriverButtonClick}
                 >
-                  {selectedDriver ? selectedDriver.name : 'Select Driver'}
+                  {selectedDriver
+                    ? `${selectedDriver.firstName} ${selectedDriver.middleName ? selectedDriver.middleName + ' ' : ''}${selectedDriver.lastName}`
+                    : 'Select Driver'}
                 </button>
 
                 {isDriverOpen && (
@@ -296,7 +296,7 @@ const CreateBus: React.FC = () => {
                             onClick={() => handleDriverSelect(driver)}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                           >
-                            {driver.name}
+                            {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
                           </div>
                         ))}
                     </div>
@@ -305,8 +305,9 @@ const CreateBus: React.FC = () => {
               </div>
               {selectedDriver && (
                 <div className="mt-2 text-gray-700">
-                  Selected Driver: {selectedDriver.name} (ID:{' '}
-                  {selectedDriver.id})
+                  Selected Driver:{' '}
+                  {`${selectedDriver.firstName} ${selectedDriver.middleName ? selectedDriver.middleName + ' ' : ''}${selectedDriver.lastName}`}{' '}
+                  (ID: {selectedDriver.id})
                 </div>
               )}
             </div>

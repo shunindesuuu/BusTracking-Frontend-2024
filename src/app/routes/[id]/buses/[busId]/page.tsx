@@ -15,8 +15,8 @@ const Page = () => {
   };
   
   const busData: BusDetails[] = [
-    { id: "1", busNumber: "101", capacity: 50, passengerCount: 40, dailyAverage: 37 },
-    { id: "2", busNumber: "202", capacity: 60, passengerCount: 55, dailyAverage: 52 },
+    { id: "84383809-ee09-482c-9c89-bc643494ec06", busNumber: "101", capacity: 50, passengerCount: 40, dailyAverage: 37 },
+    { id: "fe67db45-3925-490a-a999-b2de6a4ff659", busNumber: "202", capacity: 60, passengerCount: 55, dailyAverage: 52 },
     { id: "3", busNumber: "303", capacity: 45, passengerCount: 42, dailyAverage: 39 },
     { id: "4", busNumber: "404", capacity: 55, passengerCount: 50, dailyAverage: 48 },
   ];

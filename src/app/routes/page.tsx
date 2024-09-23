@@ -42,7 +42,7 @@ const Buses: React.FC = () => {
         {routes.map((route) => (
           <Link
             key={route.id}  // Adding the key prop here
-            href={`/routes/${route.id}`}
+            href={`/routes/${route.id}?routeName=${encodeURIComponent(route.routeName)}`}  // Including routeName in the query parameters
             className="flex-grow h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all"
           >
             {route.routeName}

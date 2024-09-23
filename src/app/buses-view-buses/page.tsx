@@ -19,7 +19,8 @@ interface Bus {
   status: string;
   _count: {
     passengers: number; // Add the passenger count from Prisma
-  }; driver: Driver | null; // Adjusted to handle cases where a driver may not be assigned
+  };
+  driver: Driver | null; // Adjusted to handle cases where a driver may not be assigned
 }
 
 const BusesViewBuses: React.FC = () => {
@@ -146,7 +147,9 @@ const BusesViewBuses: React.FC = () => {
                     {bus.status}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    Edit | Delete
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
