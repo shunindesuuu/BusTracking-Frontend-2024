@@ -93,7 +93,7 @@ const CreateDriver: React.FC = () => {
   };
 
   return (
-    <ProtectedComponent blockedRoles={['user']}>
+    <ProtectedComponent restrictedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
         <div className="bg-white shadow-md rounded-lg w-full p-4">
           <div className="bg-green-500 text-white text-center text-lg font-semibold py-4 rounded-t-lg">

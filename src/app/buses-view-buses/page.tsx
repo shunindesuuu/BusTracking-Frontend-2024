@@ -78,7 +78,7 @@ const BusesViewBuses: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <ProtectedComponent blockedRoles={['user']}>
+    <ProtectedComponent restrictedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
         <button
           type="button"
@@ -136,8 +136,6 @@ const BusesViewBuses: React.FC = () => {
                     {bus.capacity}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {/* Update passengerCount to reflect the fetched data if available */}
-                    {/* Assuming you may have a way to calculate or fetch passenger count */}
                     {bus._count.passengers}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">

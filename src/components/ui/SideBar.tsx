@@ -10,16 +10,20 @@ import NavigationBar from './NavBar';
 import SelectComponent from './SelectComponent';
 import ProgressBar from './ProgessBar';
 
-const SideBar = () => {
+interface SideBarProps {
+  onRouteSelect: (route: string) => void;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ onRouteSelect }) => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState<string>('all');
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  //get route name
   interface RouteNames {
     id: number;
     routeName: string;
@@ -33,43 +37,45 @@ const SideBar = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch('http://localhost:4000/routes/index');  
+        const response = await fetch('http://localhost:4000/routes/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const result: RouteNames[] = await response.json();
-        setRoutes(result); 
+        setRoutes(result);
       } catch (error) {
-        setError((error as Error).message);  
+        setError((error as Error).message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRoutes();  
-  }, []); 
+    fetchRoutes();
+  }, []);
+
+  const handleRouteSelect = (route: string) => {
+    setSelectedRoute(route);
+    onRouteSelect(route);
+  };
 
   return (
     <div className='z-[500]'>
-      <ProtectedComponent blockedRoles={['admin, user']}>
+      <ProtectedComponent restrictedRoles={['admin, user']}>
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
-          {/* Sidebar */}
           <div
-            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 md:static md:h-auto z-40`}
+            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+              } md:translate-x-0 md:static md:h-auto z-40`}
           >
-            <ProtectedComponent blockedRoles={['user']}>
+            <ProtectedComponent restrictedRoles={['user']}>
               <div className="flex flex-col justify-start text-base mt-24 space-y-4">
                 {menu.map((item) => (
                   <Link
                     key={item.id}
                     href={item.link}
-                    className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${
-                      pathname === item.link ? 'bg-gray-200 text-green-500' : ''
-                    }`}
-                    onClick={() => setSidebarOpen(false)} // Close sidebar on link click
+                    className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${pathname === item.link ? 'bg-gray-200 text-green-500' : ''
+                      }`}
+                    onClick={() => setSidebarOpen(false)}
                   >
                     {item.title}
                   </Link>
@@ -77,13 +83,26 @@ const SideBar = () => {
               </div>
             </ProtectedComponent>
 
-            <ProtectedComponent blockedRoles={['admin']}>
+            <ProtectedComponent restrictedRoles={['admin']}>
               <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 space-y-4 w-full">
                 <p className="">Routes</p>
 
-                <SelectComponent routes={routes}/>
+                <SelectComponent
+                  routes={routes}
+                  onSelectRoute={handleRouteSelect}
+                />
 
                 <p className="mt-10 mb-2">Bus Information</p>
+
+                {routes
+                  .filter(route => selectedRoute === 'all' || route.routeName === selectedRoute)
+                  .map((filteredRoute) => (
+                    <div key={filteredRoute.id}>
+                      <p>{filteredRoute.routeName}</p>
+                      <div style={{ backgroundColor: filteredRoute.routeColor }} className="h-2 w-full"></div>
+                    </div>
+                  ))}
+
                 <div className="bg-white h-52 w-full rounded-md border">
                   <div className="bg-white border-b w-full h-1/4 flex items-center justify-between p-2 rounded-t-md">
                     <div className="flex gap-2">
@@ -99,7 +118,7 @@ const SideBar = () => {
                       <p className="text-sm ">Taken: 30</p>
                       <p className="text-sm">Available: 20</p>
                     </div>
-                    <ProgressBar/>
+                    <ProgressBar />
                     <div className="flex flex-col justify-center align-middle h-1/2 p-2">
                       <div className="flex text-xs justify-between">
                         <p>ADDU</p>
@@ -112,6 +131,7 @@ const SideBar = () => {
                 </div>
               </div>
             </ProtectedComponent>
+
             {session && (
               <div className="flex flex-col mt-auto">
                 <p className="text-black border-">
@@ -128,11 +148,10 @@ const SideBar = () => {
             )}
           </div>
 
-          {/* Overlay when sidebar is open on mobile */}
           {isSidebarOpen && (
             <div
               className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-              onClick={toggleSidebar} // Close sidebar when clicking on the overlay
+              onClick={toggleSidebar}
             />
           )}
         </div>

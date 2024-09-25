@@ -54,7 +54,7 @@ const BusesAssignDriver: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <ProtectedComponent blockedRoles={['user']}>
+    <ProtectedComponent restrictedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
         <div className="flex justify-between mb-4">
           <button

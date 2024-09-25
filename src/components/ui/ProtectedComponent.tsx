@@ -4,18 +4,19 @@ import { useSession } from 'next-auth/react';
 
 interface ProtectedComponentProps {
   children: React.ReactNode;
-  blockedRoles?: string[];
+  restrictedRoles?: string[]; // Renamed for clarity
 }
 
-const ProtectedComponent: React.FC<ProtectedComponentProps> = ({ children, blockedRoles = [] }) => {
+const ProtectedComponent: React.FC<ProtectedComponentProps> = ({ children, restrictedRoles = [] }) => {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
-    return null; // Or you can return a loading indicator here
+    return null; // Optionally, return a loading indicator here
   }
 
-  if (!session || blockedRoles.includes(session.user?.role as string)) {
-    return null; // Hide the component if the user's role is in the restricted list
+  // Check if the user is not authenticated or if their role is in the restricted list
+  if (!session || restrictedRoles.includes(session.user?.role as string)) {
+    return null; // Hide the component if the user's role is restricted
   }
 
   return <>{children}</>;

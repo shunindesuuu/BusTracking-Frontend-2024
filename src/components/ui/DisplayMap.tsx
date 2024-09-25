@@ -3,8 +3,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const DisplayMap = () => {
+interface DisplayMapProps {
+  selectedRoute: string;
+}
 
+const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   interface Coordinate {
     latitude: number;
     longitude: number;
@@ -14,14 +17,15 @@ const DisplayMap = () => {
     id: number;
     routeName: string;
     routeColor: string;
-    coordinates: Coordinate[];  // Use Coordinate array for lat/long pairs
+    coordinates: Coordinate[];
   }
 
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const mapRef = useRef<L.Map | null>(null); // Ref to store the map instance
+  const mapRef = useRef<L.Map | null>(null);
+  const routeLayersRef = useRef<{ [key: string]: L.Polyline }>({});
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -45,7 +49,6 @@ const DisplayMap = () => {
   useEffect(() => {
     const initMap = (lat: number, lng: number, zoom: number) => {
       if (!mapRef.current) {
-        // Only initialize the map if it hasn't been initialized already
         const map = L.map('map').setView([lat, lng], zoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -53,23 +56,14 @@ const DisplayMap = () => {
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(map);
 
-        mapRef.current = map; // Store the map instance in the ref
-  
-        // Set cursor styles
+        mapRef.current = map;
+
         document.getElementById('map')!.style.cursor = 'default';
         map.on('mousedown', () => document.getElementById('map')!.style.cursor = 'grabbing');
         map.on('mouseup', () => document.getElementById('map')!.style.cursor = 'default');
         map.on('dragstart', () => document.getElementById('map')!.style.cursor = 'grabbing');
         map.on('dragend', () => document.getElementById('map')!.style.cursor = 'default');
-
-        
       }
-
-      // Add routes to the map
-      routes.forEach(route => {
-        const latLngs = route.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
-        L.polyline(latLngs, { color: route.routeColor }).addTo(mapRef.current!);
-      });
     };
 
     if (navigator.geolocation) {
@@ -77,11 +71,8 @@ const DisplayMap = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
-
-          // Initialize map at user location with zoom 16
           initMap(latitude, longitude, 16);
 
-          // Add a circle marker at user's location
           if (mapRef.current) {
             L.circleMarker([latitude, longitude], {
               radius: 10,
@@ -92,15 +83,36 @@ const DisplayMap = () => {
           }
         },
         () => {
-          // Fallback if location access is denied
-          initMap(7.072093, 125.612058, 13); // Default location with zoom 13
+          initMap(7.072093, 125.612058, 13);
         }
       );
     } else {
-      // If geolocation is not supported
-      initMap(7.072093, 125.612058, 13); // Default location with zoom 13
+      initMap(7.072093, 125.612058, 13);
     }
-  }, [routes]);
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || routes.length === 0) return;
+
+    Object.values(routeLayersRef.current).forEach(layer => {
+      layer.remove();
+    });
+    routeLayersRef.current = {};
+
+    routes.forEach(route => {
+      if (selectedRoute === 'all' || selectedRoute === route.routeName) {
+        const latLngs = route.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
+        const polyline = L.polyline(latLngs, { color: route.routeColor }).addTo(mapRef.current!);
+        routeLayersRef.current[route.routeName] = polyline;
+      }
+    });
+  }, [routes, selectedRoute]);
 
   return (
     <div
