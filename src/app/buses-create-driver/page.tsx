@@ -21,6 +21,7 @@ const CreateDriver: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('');
   const [status, setStatus] = useState('');
 
@@ -61,6 +62,7 @@ const CreateDriver: React.FC = () => {
       firstName,
       middleName,
       lastName,
+      email,
       phone,
       status,
       busId: selectedBus ? selectedBus.id : null,
@@ -82,6 +84,7 @@ const CreateDriver: React.FC = () => {
       setFirstName('');
       setMiddleName('');
       setLastName('');
+      setEmail('');
       setPhone('');
       setStatus('');
       setSelectedBus(null);
@@ -150,6 +153,24 @@ const CreateDriver: React.FC = () => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="email"
+              >
+                Email
+              </label>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
 
             <div className="mb-4">
               <label
