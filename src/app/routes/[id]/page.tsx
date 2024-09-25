@@ -97,8 +97,6 @@ interface ChannelData {
       }
     }
 
-    
-
     fetchThingSpeakChannel();
     fetchBuses();  
   }, []);
