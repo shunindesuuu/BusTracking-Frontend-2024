@@ -13,7 +13,7 @@ export default function Home() {
     <main>
       {/* Add your sections here */}
       <SideBar onRouteSelect={setSelectedRoute} />
-      <DisplayMap selectedRoute={selectedRoute} /> {/* Pass the selected route */}
+      <DisplayMap selectedRoute={selectedRoute} />
     </main>
   );
 }

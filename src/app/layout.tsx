@@ -23,6 +23,7 @@ export default function RootLayout({
         <body className={`${poppins.className} flex flex-col`}>
           <SessionHandler />
           <div className="flex flex-row">
+            <SideBar />
             <div className="flex-1">
               <main>{children}</main>
             </div>
