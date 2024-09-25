@@ -17,12 +17,14 @@ const Buses: React.FC = () => {
 
   useEffect(() => {
     const fetchRoutes = async () => {
+      console.log("routes page load")
       try {
         const response = await fetch('http://localhost:4000/routes/index');  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const result: RouteNames[] = await response.json();
+        console.log(result)
         setRoutes(result); 
       } catch (error) {
         setError((error as Error).message);  

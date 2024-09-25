@@ -9,12 +9,18 @@ const DisplayMap = () => {
     latitude: number;
     longitude: number;
   }
-
+  
+  interface Path {
+    id: string;
+    routeId: string;
+    coordinates: Coordinate[];  // Array of coordinates for each path
+  }
+  
   interface RouteNames {
-    id: number;
+    id: string;
     routeName: string;
     routeColor: string;
-    coordinates: Coordinate[];  // Use Coordinate array for lat/long pairs
+    paths: Path[];  // Each route contains an array of paths
   }
 
   const [routes, setRoutes] = useState<RouteNames[]>([]);
@@ -31,6 +37,7 @@ const DisplayMap = () => {
           throw new Error('Network response was not ok');
         }
         const result: RouteNames[] = await response.json();
+        console.log(result)
         setRoutes(result);
       } catch (error) {
         setError((error as Error).message);
@@ -66,10 +73,12 @@ const DisplayMap = () => {
       }
 
       // Add routes to the map
-      routes.forEach(route => {
-        const latLngs = route.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
-        L.polyline(latLngs, { color: route.routeColor }).addTo(mapRef.current!);
-      });
+routes.forEach(route => {
+  route.paths.forEach(path => {
+    const latLngs = path.coordinates.map(coord => [coord.latitude, coord.longitude] as L.LatLngExpression);
+    L.polyline(latLngs, { color: route.routeColor }).addTo(mapRef.current!);
+  });
+});
     };
 
     if (navigator.geolocation) {
