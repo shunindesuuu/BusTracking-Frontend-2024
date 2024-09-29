@@ -117,7 +117,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   return (
     <div
       id="map"
-      className="w-full bg-black cursor-default"
+      className="w-full bg-black cursor-default z-30"
       style={{ height: 'calc(100vh - 68px)', marginTop: '68px' }}
     ></div>
   );

@@ -1,19 +1,25 @@
 'use client';
-import SessionHandler from '@/components/SessionHandler';
 import DisplayMap from '@/components/ui/DisplayMap';
-import DrawRoute from '@/components/ui/DrawRoute';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import RouteFilter from '@/components/ui/RouteFilter';
 import SideBar from '@/components/ui/SideBar';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Home() {
-  const [selectedRoute, setSelectedRoute] = useState('all'); // State for selected route
+  const [selectedRoute, setSelectedRoute] = useState('all');
 
+  const handleRouteSelect = (route: string) => {
+    setSelectedRoute(route);
+  };
   return (
     <main>
-      {/* Add your sections here */}
-      <SideBar onRouteSelect={setSelectedRoute} />
-      <DisplayMap selectedRoute={selectedRoute} /> {/* Pass the selected route */}
+      <ProtectedComponent>
+        <div className="absolute top-[100px] md:top-10 right-0 z-50">
+          <RouteFilter onRouteSelect={handleRouteSelect} />
+        </div>
+      </ProtectedComponent>
+      {/* Map Component */}
+      <DisplayMap selectedRoute={selectedRoute} />
     </main>
   );
 }
