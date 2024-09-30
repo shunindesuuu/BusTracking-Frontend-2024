@@ -90,7 +90,6 @@ const Driver = () => {
           </svg>
         </button>
       </header>
-
       {/* Route Selection */}
       <div className="my-4">
         <label className="block text-black font-bold mb-2">
@@ -103,9 +102,9 @@ const Driver = () => {
               onClick={() => handleRouteSelect(route)}
               className={`p-2 rounded border ${
                 selectedRoute?.id === route.id
-                  ? route.routeColor
-                  : 'bg-gray-200'
-              } text-white`}
+                  ? 'bg-green-700 text-white'
+                  : 'bg-green-500 text-white'
+              }`}
             >
               {route.routeName}
             </button>
