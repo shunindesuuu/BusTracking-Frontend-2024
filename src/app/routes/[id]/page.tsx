@@ -128,7 +128,10 @@ interface ChannelData {
 
   return (
     <div className="flex flex-col justify-center container mx-auto mt-16 p-5">
+      <div className='flex justify-between items-center'>
       <div>{routeName}</div>
+      <Link id='editbutton' href={`${id}/update/${id}`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit px-5 py-1 rounded-md'>Edit</Link>
+      </div>
       <div className="flex justify-center container mx-auto gap-4 mt-3">
         <Link
           href={`${id}/buses?routeName=${encodeURIComponent(routeName)}`}
