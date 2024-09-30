@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import menu from '../utils/menu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,8 +19,38 @@ const SideBar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
+  //get route name
+  interface RouteNames {
+    id: number;
+    routeName: string;
+    routeColor: string;
+  }
+
+  const [routes, setRoutes] = useState<RouteNames[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/routes/index');  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: RouteNames[] = await response.json();
+        setRoutes(result); 
+      } catch (error) {
+        setError((error as Error).message);  
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoutes();  
+  }, []); 
+
   return (
-    <div>
+    <div className='z-[500]'>
       <ProtectedComponent blockedRoles={['admin, user']}>
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
@@ -50,7 +80,8 @@ const SideBar = () => {
             <ProtectedComponent blockedRoles={['admin']}>
               <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 space-y-4 w-full">
                 <p className="">Routes</p>
-                <SelectComponent />
+
+                <SelectComponent routes={routes}/>
 
                 <p className="mt-10 mb-2">Bus Information</p>
                 <div className="bg-white h-52 w-full rounded-md border">
