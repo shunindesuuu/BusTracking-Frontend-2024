@@ -28,6 +28,8 @@ const RouteForm: React.FC = () => {
   const [routeName, setRouteName] = useState('');
     const [routeColor, setRouteColor] = useState(''); // Default color
     const [latlngs, setLatlngs] = useState<{ pointOrder: number; latitude: number; longitude: number }[]>([]);
+
+    
  
   useEffect(() => {
     const fetchRoute = async () => {
@@ -120,6 +122,13 @@ const RouteForm: React.FC = () => {
           className='bg-gray-200 w-fit h-fit px-10 py-3 rounded-md hover:bg-gray-300 active:bg-gray-200'>
           Update
         </button>
+
+        {/* <button
+          type='submit'
+          onClick={removeLastLatLng}
+          className='bg-gray-200 w-fit h-fit px-10 py-3 rounded-md hover:bg-gray-300 active:bg-gray-200'>
+          Pop
+        </button> */}
   
       </div>
     );

@@ -17,6 +17,40 @@ const DrawRoute: React.FC<DrawRouteProps> = ({ onUpdateLatLngs, color, initialLa
   const xMarkerRef = useRef<L.Marker | null>(null); 
   const firstPointRef = useRef<L.CircleMarker | null>(null); 
 
+  const removeLastLatLng = () => {
+    setLatlngs((prevLatlngs) => {
+      const updatedLatlngs = prevLatlngs.slice(0, -1);
+  
+      // If the last point was removed, clear the markers
+      if (updatedLatlngs.length === 0) {
+        firstPointRef.current?.remove();
+        xMarkerRef.current?.remove();
+        setPointOrder(0); // Reset point order if no points are left
+        return updatedLatlngs;
+      }
+  
+      // Update the "X" marker to the new last point
+      const lastPoint = updatedLatlngs[updatedLatlngs.length - 1];
+      xMarkerRef.current?.remove();
+      xMarkerRef.current = L.marker([lastPoint.latitude, lastPoint.longitude], {
+        icon: L.divIcon({
+          className: 'custom-x-icon',
+          html: `<div style="background-color: white; border: 2px solid black; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 16px;">&#10006;</div>`,
+          iconSize: [24, 24],
+        }),
+      })
+      .on('click', removeLastLatLng)
+      .addTo(mapRef.current!);
+  
+      // Update pointOrder based on the new number of points
+      setPointOrder(updatedLatlngs.length);
+  
+      return updatedLatlngs;
+    });
+  };
+  
+  
+
   useEffect(() => {
     // Initialize map only once
     mapRef.current = L.map('map').setView([7.072093, 125.612058], 13);
@@ -26,6 +60,8 @@ const DrawRoute: React.FC<DrawRouteProps> = ({ onUpdateLatLngs, color, initialLa
     }).addTo(mapRef.current);
 
     // Initialize polyline with initial latlngs
+    console.log(latlngs)
+
     polylineRef.current = L.polyline(
       initialLatlngs.map(point => [point.latitude, point.longitude] as LatLngExpression),
       { color: color || 'lightgreen' }
@@ -84,7 +120,7 @@ const DrawRoute: React.FC<DrawRouteProps> = ({ onUpdateLatLngs, color, initialLa
         map.off('click', handleMapClick);
       };
     }
-  }, [pointOrder]); // Runs when pointOrder changes
+  }, [latlngs]); // Runs when pointOrder changes
 
   const setupCursorStyles = (map: L.Map | null) => {
     if (!map) return;
@@ -114,7 +150,9 @@ const DrawRoute: React.FC<DrawRouteProps> = ({ onUpdateLatLngs, color, initialLa
           html: `<div style="background-color: white; border: 2px solid black; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 16px;">&#10006;</div>`,
           iconSize: [24, 24],
         }),
-      }).addTo(mapRef.current!);
+      })
+      .on('click', removeLastLatLng)
+      .addTo(mapRef.current!);
     }
   };
 
@@ -139,7 +177,9 @@ const DrawRoute: React.FC<DrawRouteProps> = ({ onUpdateLatLngs, color, initialLa
         html: `<div style="background-color: white; border: 2px solid black; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 16px;">&#10006;</div>`,
         iconSize: [24, 24],
       }),
-    }).addTo(mapRef.current!);
+    })
+    .on('click', removeLastLatLng)
+    .addTo(mapRef.current!);
   };
 
   return <div id="map" className="h-full w-full bg-black cursor-default"></div>;
