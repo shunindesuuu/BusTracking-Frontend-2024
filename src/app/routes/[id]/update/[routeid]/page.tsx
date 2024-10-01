@@ -59,12 +59,13 @@ const RouteForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        const response = await fetch('http://localhost:4000/routes/create', {
+        const response = await fetch('http://localhost:4000/routes/update', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            id,
             routeName,
             routeColor,
             coordinates: latlngs
@@ -117,7 +118,7 @@ const RouteForm: React.FC = () => {
           type='submit'
           onClick={handleSubmit}
           className='bg-gray-200 w-fit h-fit px-10 py-3 rounded-md hover:bg-gray-300 active:bg-gray-200'>
-          Create
+          Update
         </button>
   
       </div>
