@@ -18,6 +18,7 @@ const menu = [
         link: "/buses",
 
     },
+
 ];
 
 export default menu;

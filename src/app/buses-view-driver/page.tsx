@@ -5,7 +5,9 @@ import React, { useEffect, useState } from 'react';
 
 interface Driver {
   id: string;
-  name: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
   phone: string;
   status: string;
   bus: {
@@ -54,7 +56,7 @@ const BusesAssignDriver: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <ProtectedComponent restrictedRoles={['user']}>
+    <ProtectedComponent blockedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
         <div className="flex justify-between mb-4">
           <button
@@ -107,8 +109,9 @@ const BusesAssignDriver: React.FC = () => {
                     {index + 1}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.name}
+                    {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
                   </td>
+
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {driver.bus ? driver.bus.busName : 'N/A'}
                   </td>
@@ -117,6 +120,11 @@ const BusesAssignDriver: React.FC = () => {
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {driver.bus ? driver.bus.status : 'N/A'}
+                  </td>
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
