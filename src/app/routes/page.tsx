@@ -49,7 +49,7 @@ const Buses: React.FC = () => {
   }, []);
 
   return (
-    <ProtectedComponent blockedRoles={['user']}>
+    <ProtectedComponent restrictedRoles={['user']}>
       <div className="flex flex-col justify-center container mx-auto mt-16 p-4 gap-4">
         <Link id='createbutton' href={`/routes/create`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit p-2 rounded-md'>Create Route</Link>
         <div className='grid grid-cols-3 gap-2'>
