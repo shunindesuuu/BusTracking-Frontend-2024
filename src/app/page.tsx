@@ -1,22 +1,25 @@
-import SessionHandler from '@/components/SessionHandler';
+'use client';
 import DisplayMap from '@/components/ui/DisplayMap';
-import DrawRoute from '@/components/ui/DrawRoute';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
-
-import React from 'react';
-
-export const metadata = {
-  title: 'Bus Tracking System Using ESP32 and GPS Module',
-  description:
-    'The project is a bus tracking system that uses an ESP32 and a GPS module to track the location of a bus in real-time.',
-};
+import RouteFilter from '@/components/ui/RouteFilter';
+import SideBar from '@/components/ui/SideBar';
+import React, { useState } from 'react';
 
 export default function Home() {
+  const [selectedRoute, setSelectedRoute] = useState('all');
+
+  const handleRouteSelect = (route: string) => {
+    setSelectedRoute(route);
+  };
   return (
     <main>
-      {/* add sections here */}
-      {/* <DrawRoute /> */}
-      <DisplayMap />
+      <ProtectedComponent>
+        <div className="absolute top-[100px] md:top-10 right-0 z-50">
+          <RouteFilter onRouteSelect={handleRouteSelect} />
+        </div>
+      </ProtectedComponent>
+      {/* Map Component */}
+      <DisplayMap selectedRoute={selectedRoute} />
     </main>
   );
 }
