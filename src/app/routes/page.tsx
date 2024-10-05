@@ -9,11 +9,24 @@ const Buses: React.FC = () => {
     id: number;
     routeName: string;
     routeColor: string;
+    buses:Buses[]
   }
 
+  interface Buses {
+    id: number;
+    routeId: string;
+    busNumber: string;
+    capacity: number;
+    status: string;
+    busName: string
+    route:RouteNames
+  }
+  const [buses, setBuses] = useState<Buses[]>([]);
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null)
+  const [totalCapacity, setTotalCapacity] = useState<number>(0);
+
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -24,6 +37,7 @@ const Buses: React.FC = () => {
         }
         const result: RouteNames[] = await response.json();
         setRoutes(result); 
+        console.log(result[0])
       } catch (error) {
         setError((error as Error).message);  
       } finally {
@@ -35,20 +49,35 @@ const Buses: React.FC = () => {
   }, []);
 
   return (
-    <ProtectedComponent blockedRoles={['user']}>
-      <div className="flex  flex-col justify-center container mx-auto mt-16 p-4 gap-4">
+    <ProtectedComponent restrictedRoles={['user']}>
+      <div className="flex flex-col justify-center container mx-auto mt-16 p-4 gap-4">
         <Link id='createbutton' href={`/routes/create`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit p-2 rounded-md'>Create Route</Link>
-        <div className='flex gap-4'>
-        {routes.map((route) => (
-          <Link
-            key={route.id}  // Adding the key prop here
-            href={`/routes/${route.id}?routeName=${encodeURIComponent(route.routeName)}`}  // Including routeName in the query parameters
-            className="flex-grow h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all"
-          >
-            {route.routeName}
-          </Link>
-        ))}
-        </div>
+        <div className='grid grid-cols-3 gap-2'>
+        {routes.map((route) => {
+            const totalCapacity = route.buses.reduce((acc, bus) => acc + bus.capacity, 0);
+          return(
+            <Link
+              key={route.id}  // Adding the key prop here
+              href={`/routes/${route.id}?routeName=${encodeURIComponent(route.routeName)}`}  // Including routeName in the query parameters
+              className="bg-gray-100 pt-5 justify-between text-center rounded-md shadow-md hover:bg-gray-200 h-fit flex flex-col"
+            >
+              <div className='text-lg font-semibold'>{route.routeName}</div>
+              <div className='p-5 w-full flex flex-col justify-start items-start'>
+              <div className='text-md font-thin flex gap-3  w-full justify-between'>
+                <div>Number of Buses:</div>
+                <div>{route.buses.length}</div>
+              </div>
+              <div className='text-md font-thin flex  w-full justify-between gap-3'>
+                <div>Route Capacity:</div>
+                <div>{totalCapacity}</div> {/* Display the total route capacity here */}
+              </div>
+              </div>
+            </Link>
+          )
+        }
+        )}
+      </div>
+
       </div>
     </ProtectedComponent>
   );
