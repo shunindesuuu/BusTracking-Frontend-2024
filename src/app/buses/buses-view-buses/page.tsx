@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 interface Driver {
+  firstName: any;
+  middleName: any;
+  lastName: any;
   id: string;
   name: string;
   phone: string;
@@ -140,7 +143,9 @@ const BusesViewBuses: React.FC = () => {
                     {bus._count.passengers}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {bus.driver ? bus.driver.name : 'No Driver Assigned'}
+                    {bus.driver
+                      ? `${bus.driver.firstName} ${bus.driver.middleName ? bus.driver.middleName + ' ' : ''}${bus.driver.lastName}`
+                      : 'No Driver Assigned'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {bus.status}
