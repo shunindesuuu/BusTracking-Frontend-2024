@@ -147,7 +147,7 @@ const BusesViewBuses: React.FC = () => {
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     <Link
-                      href={`/buses-update-buses/${bus.id}`}
+                      href={`buses-update-buses/${bus.id}`}
                       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
                       Edit
