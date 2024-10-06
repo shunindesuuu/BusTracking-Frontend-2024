@@ -53,12 +53,13 @@ const BusForm: React.FC = () => {
 
     fetchBus();
   }, [id]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:4000/buses/${id}`, {
-        method: 'POST',
+      const response = await fetch(`http://localhost:4000/buses/update`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
