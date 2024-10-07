@@ -30,7 +30,7 @@ const BusesAssignDriver: React.FC = () => {
   };
 
   const handleCreateClick = () => {
-    router.push('/buses-create-driver'); // Redirects to the create driver page
+    router.push('/buses/buses-create-driver'); // Redirects to the create driver page
   };
 
   useEffect(() => {

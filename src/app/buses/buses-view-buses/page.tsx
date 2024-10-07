@@ -1,9 +1,13 @@
 'use client';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 interface Driver {
+  firstName: any;
+  middleName: any;
+  lastName: any;
   id: string;
   name: string;
   phone: string;
@@ -139,15 +143,20 @@ const BusesViewBuses: React.FC = () => {
                     {bus._count.passengers}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {bus.driver ? bus.driver.name : 'No Driver Assigned'}
+                    {bus.driver
+                      ? `${bus.driver.firstName} ${bus.driver.middleName ? bus.driver.middleName + ' ' : ''}${bus.driver.lastName}`
+                      : 'No Driver Assigned'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {bus.status}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <Link
+                      href={`buses-update-buses/${bus.id}`}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
                       Edit
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
