@@ -58,7 +58,9 @@ interface ChannelData {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null)
   const [totalCapacity, setTotalCapacity] = useState<number>(0);
-  const latestPassengers = data?.feeds.length ? data.feeds[0].field1 : '0';
+  // const latestPassengers = data?.feeds.length ? data.feeds[0].field1 : '0';
+  const [latestPassengers, setLatestPassengers] = useState(null);
+
 
 
   useEffect(() => {
@@ -104,22 +106,29 @@ interface ChannelData {
     fetchBuses();  
   }, []);
 
-  useEffect(()=>{
-    console.log(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=1`)
-    fetch(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=1`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setData(data); // Update the state with the fetched data
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-      });
-  },[channel])
+  useEffect(() => {
+    if (channel?.id && channel?.fieldNumber) {
+      fetch(`https://api.thingspeak.com/channels/${channel.id}/fields/${channel.fieldNumber}.json?results=20`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Find the latest non-null value
+          const nonNullFeeds = data.feeds.filter(feed => feed[`field${channel.fieldNumber}`] !== null);
+          if (nonNullFeeds.length > 0) {
+            setLatestPassengers(nonNullFeeds[nonNullFeeds.length - 1][`field${channel.fieldNumber}`]);
+          } else {
+            setLatestPassengers(null); // No valid data found
+          }
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+  }, [channel]);
 
   if (!id) {
     return <div>Error: Route ID is missing.</div>;
