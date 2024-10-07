@@ -2,6 +2,8 @@
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+
 
 interface Driver {
   id: string;
@@ -56,7 +58,7 @@ const BusesAssignDriver: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <ProtectedComponent blockedRoles={['user']}>
+    <ProtectedComponent restrictedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
         <div className="flex justify-between mb-4">
           <button
@@ -122,9 +124,13 @@ const BusesAssignDriver: React.FC = () => {
                     {driver.bus ? driver.bus.status : 'N/A'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <Link
+                    
+                      href={`buses-update-driver/${driver.id}`}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
                       Edit
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
