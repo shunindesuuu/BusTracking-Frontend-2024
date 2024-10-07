@@ -27,6 +27,7 @@ interface Route {
 
   interface RouteChannel {
     id: string,
+    apiKey: string,
     channelId: string,
     fieldNumber: string,
   }
@@ -88,7 +89,7 @@ interface ChannelData {
         }
         const result: RouteChannel = await response.json();
         setChannel(result);
-        console.log(result)
+        // console.log(result.channelId)
   
       } catch (error) {
         setError((error as Error).message);  
@@ -104,6 +105,7 @@ interface ChannelData {
   }, []);
 
   useEffect(()=>{
+    console.log(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=1`)
     fetch(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=1`)
       .then(response => {
         if (!response.ok) {
