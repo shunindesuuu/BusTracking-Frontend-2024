@@ -31,6 +31,12 @@ interface Route {
     channelId: string,
     fieldNumber: string,
   }
+  // Define the structure for the feed data
+interface Feed {
+  created_at: string;
+  entry_id: number;
+  [key: string]: any; // This allows for dynamic fields (e.g., field1, field2, etc.)
+}
 
   // Define the type for the data you expect to fetch
 interface ChannelData {
@@ -108,7 +114,7 @@ interface ChannelData {
 
   useEffect(() => {
     if (channel?.id && channel?.fieldNumber) {
-      fetch(`https://api.thingspeak.com/channels/${channel.id}/fields/${channel.fieldNumber}.json?results=20`)
+      fetch(`https://api.thingspeak.com/channels/${channel.channelId}/fields/${channel.fieldNumber}.json?results=20`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -117,7 +123,7 @@ interface ChannelData {
         })
         .then(data => {
           // Find the latest non-null value
-          const nonNullFeeds = data.feeds.filter(feed => feed[`field${channel.fieldNumber}`] !== null);
+          const nonNullFeeds = data.feeds.filter((feed: Feed) => feed[`field${channel.fieldNumber}`] !== null);
           if (nonNullFeeds.length > 0) {
             setLatestPassengers(nonNullFeeds[nonNullFeeds.length - 1][`field${channel.fieldNumber}`]);
           } else {
