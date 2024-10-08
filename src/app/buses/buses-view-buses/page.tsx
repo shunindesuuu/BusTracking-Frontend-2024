@@ -58,7 +58,9 @@ const BusesViewBuses: React.FC = () => {
         return { ...bus, driver: assignedDriver };
       });
 
-      setBuses(busesWithDrivers);
+      console.log()
+
+      setBuses(busesResult);
     } catch (error) {
       setError((error as Error).message);
     } finally {

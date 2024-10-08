@@ -20,7 +20,7 @@ const DriverForm: React.FC = () => {
     lastName: string;
     phone: string;
     status: string;
-    busId: string | null; // Driver can have no bus assigned
+    bus: Bus | null; // Driver can have no bus assigned
   }
 
   // State for loading, error, and form fields
@@ -61,14 +61,16 @@ const DriverForm: React.FC = () => {
         setLastName(result.lastName);
         setPhone(result.phone);
         setStatus(result.status);
-        setBusId(result.busId);
+        setBusId(result.bus?.id || null);
+        console.log(result)
 
-        if (result.busId) {
+        if (result.bus) {
           const busResponse = await fetch(
-            `http://localhost:4000/buses/${result.busId}`
+            `http://localhost:4000/buses/${result.bus.id}`
           );
           if (busResponse.ok) {
             const busData: Bus = await busResponse.json();
+
             setSelectedBus(busData); // Set the selected bus based on the fetched data
           }
         }
