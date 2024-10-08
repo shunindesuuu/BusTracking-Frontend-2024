@@ -2,20 +2,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
-const BusForm: React.FC = () => {
+const DriverForm: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
 
-  // Bus Interface
+  // Driver Interface
   interface Bus {
-    id: number;
+    id: string;
     busName: string;
-    busNumber: string;
-    capacity: number;
-    status: string;
-    driverId: string | null; // Driver ID may be null if no driver is assigned
-    routeId: string;
   }
 
   interface Driver {
@@ -23,54 +18,58 @@ const BusForm: React.FC = () => {
     firstName: string;
     middleName?: string;
     lastName: string;
+    phone: string;
+    status: string;
+    busId: string | null; // Driver can have no bus assigned
   }
 
   // State for loading, error, and form fields
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [busName, setBusName] = useState<string>('');
-  const [busNumber, setBusNumber] = useState<string>('');
-  const [capacity, setCapacity] = useState<number | ''>('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [middleName, setMiddleName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [status, setStatus] = useState<string>('');
-  const [routeId, setRouteId] = useState<string>('');
+  const [busId, setBusId] = useState<string | null>(null);
 
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null); // Current selected driver
-  const [isDriverOpen, setIsDriverOpen] = useState(false);
+  const [buses, setBuses] = useState<Bus[]>([]);
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
+  const [isBusOpen, setIsBusOpen] = useState(false);
 
-  const handleDriverButtonClick = () => {
-    setIsDriverOpen(!isDriverOpen);
+  const handleBusButtonClick = () => {
+    setIsBusOpen(!isBusOpen);
   };
 
-  const handleDriverSelect = (driver: Driver) => {
-    setSelectedDriver(driver);
-    setIsDriverOpen(false);
+  const handleBusSelect = (bus: Bus) => {
+    setSelectedBus(bus);
+    setIsBusOpen(false);
   };
 
-  // Fetch the bus data when the component loads
+  // Fetch the driver data when the component loads
   useEffect(() => {
-    const fetchBus = async () => {
+    const fetchDriver = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/${id}`);
+        const response = await fetch(`http://localhost:4000/drivers/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const result: Bus = await response.json();
-        setBusName(result.busName);
-        setBusNumber(result.busNumber);
-        setCapacity(result.capacity);
+        const result: Driver = await response.json();
+        setFirstName(result.firstName);
+        setMiddleName(result.middleName || '');
+        setLastName(result.lastName);
+        setPhone(result.phone);
         setStatus(result.status);
-        setRouteId(result.routeId);
+        setBusId(result.busId);
 
-        // Fetch the driver based on the driver's ID from the bus data
-        if (result.driverId) {
-          const driverResponse = await fetch(
-            `http://localhost:4000/drivers/${result.driverId}`
+        if (result.busId) {
+          const busResponse = await fetch(
+            `http://localhost:4000/buses/${result.busId}`
           );
-          if (driverResponse.ok) {
-            const driverData: Driver = await driverResponse.json();
-            setSelectedDriver(driverData); // Set the selected driver based on the fetched data
+          if (busResponse.ok) {
+            const busData: Bus = await busResponse.json();
+            setSelectedBus(busData); // Set the selected bus based on the fetched data
           }
         }
       } catch (error) {
@@ -80,54 +79,54 @@ const BusForm: React.FC = () => {
       }
     };
 
-    const fetchDrivers = async () => {
+    const fetchBuses = async () => {
       try {
-        const response = await fetch('http://localhost:4000/drivers/index');
+        const response = await fetch('http://localhost:4000/buses/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const result: Driver[] = await response.json();
-        setDrivers(result);
+        const result: Bus[] = await response.json();
+        setBuses(result);
       } catch (error) {
         setError((error as Error).message);
       }
     };
 
-    fetchDrivers();
-    fetchBus();
+    fetchDriver();
+    fetchBuses();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:4000/buses/update`, {
+      const response = await fetch(`http://localhost:4000/drivers/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           id,
-          busName,
-          busNumber,
-          capacity,
+          firstName,
+          middleName,
+          lastName,
+          phone,
           status,
-          driverId: selectedDriver ? selectedDriver.id : null, // Send the selected driver ID
-          routeId,
+          busId: selectedBus ? selectedBus.id : null, // Send the selected bus ID
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update bus');
+        throw new Error('Failed to update driver');
       }
 
-      const updatedBus = await response.json();
-      console.log('Bus updated successfully:', updatedBus);
+      const updatedDriver = await response.json();
+      console.log('Driver updated successfully:', updatedDriver);
 
-      // Redirect to the buses page after successful update
-      router.push('/buses');
+      // Redirect to the drivers page after successful update
+      router.push('/drivers');
     } catch (error) {
-      console.error('Error updating bus:', error);
+      console.error('Error updating driver:', error);
     }
   };
 
@@ -136,22 +135,32 @@ const BusForm: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <div className="flex gap-4 w-full">
           <div className="flex flex-col">
-            <label htmlFor="busName">Update Driver here</label>
+            <label htmlFor="firstName">First Name</label>
             <input
-              id="busName"
-              placeholder="e.g. Bus 1"
-              value={busName}
-              onChange={(e) => setBusName(e.target.value)}
+              id="firstName"
+              placeholder="e.g. John"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               className="h-fit w-fit p-2 border-2 rounded-md"
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="busNumber">Bus Number</label>
+            <label htmlFor="middleName">Middle Name</label>
             <input
-              id="busNumber"
-              placeholder="e.g. 1234"
-              value={busNumber}
-              onChange={(e) => setBusNumber(e.target.value)}
+              id="middleName"
+              placeholder="e.g. Doe"
+              value={middleName}
+              onChange={(e) => setMiddleName(e.target.value)}
+              className="h-fit w-fit p-2 border-2 rounded-md"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              id="lastName"
+              placeholder="e.g. Smith"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               className="h-fit w-fit p-2 border-2 rounded-md"
             />
           </div>
@@ -159,13 +168,12 @@ const BusForm: React.FC = () => {
 
         <div className="flex gap-4 w-full">
           <div className="flex flex-col">
-            <label htmlFor="capacity">Capacity</label>
+            <label htmlFor="phone">Phone</label>
             <input
-              id="capacity"
-              type="number"
-              placeholder="e.g. 50"
-              value={capacity}
-              onChange={(e) => setCapacity(Number(e.target.value))}
+              id="phone"
+              placeholder="e.g. 09123456789"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="h-fit w-fit p-2 border-2 rounded-md"
             />
           </div>
@@ -181,62 +189,49 @@ const BusForm: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex gap-4 w-full mb-4">
-          {/* Driver Selection */}
-          <div className="flex flex-col">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Current Driver
-            </label>
-            <div className="relative inline-block text-left">
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                onClick={handleDriverButtonClick}
-              >
-                {selectedDriver
-                  ? `Current Driver: ${selectedDriver.firstName} ${selectedDriver.middleName ? selectedDriver.middleName + ' ' : ''}${selectedDriver.lastName}`
-                  : 'Select Driver'}
-              </button>
+        {/* Bus Selection */}
+        <div className="flex flex-col mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Current Bus
+          </label>
+          <div className="relative inline-block text-left">
+            <button
+              type="button"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              onClick={handleBusButtonClick}
+            >
+              {selectedBus
+                ? `Current Bus: ${selectedBus.busName}`
+                : 'Select Bus'}
+            </button>
 
-              {isDriverOpen && (
-                <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                  <div className="py-1">
-                    {loading && (
-                      <div className="px-4 py-2 text-sm text-gray-700">
-                        Loading...
+            {isBusOpen && (
+              <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                <div className="py-1">
+                  {loading && (
+                    <div className="px-4 py-2 text-sm text-gray-700">
+                      Loading...
+                    </div>
+                  )}
+                  {error && (
+                    <div className="px-4 py-2 text-sm text-red-600">
+                      {error}
+                    </div>
+                  )}
+                  {!loading &&
+                    !error &&
+                    buses.map((bus) => (
+                      <div
+                        key={bus.id}
+                        onClick={() => handleBusSelect(bus)}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {bus.busName}
                       </div>
-                    )}
-                    {error && (
-                      <div className="px-4 py-2 text-sm text-red-600">
-                        {error}
-                      </div>
-                    )}
-                    {!loading &&
-                      !error &&
-                      drivers.map((driver) => (
-                        <div
-                          key={driver.id}
-                          onClick={() => handleDriverSelect(driver)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                        >
-                          {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
-                        </div>
-                      ))}
-                  </div>
+                    ))}
                 </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="routeId">Route ID</label>
-            <input
-              id="routeId"
-              placeholder="e.g. 1"
-              value={routeId}
-              onChange={(e) => setRouteId(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
+              </div>
+            )}
           </div>
         </div>
 
@@ -244,11 +239,11 @@ const BusForm: React.FC = () => {
           type="submit"
           className="bg-gray-200 w-fit h-fit px-10 py-3 rounded-md hover:bg-gray-300 active:bg-gray-200"
         >
-          Update Bus
+          Update Driver
         </button>
       </form>
     </div>
   );
 };
 
-export default BusForm;
+export default DriverForm;
