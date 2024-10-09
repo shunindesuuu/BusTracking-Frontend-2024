@@ -24,6 +24,12 @@ const menu = [
         link: "/driver",
 
     },
+    {
+        id: 5,
+        title: "Users",
+        link: "/users",
+
+    },
 
 ];
 
