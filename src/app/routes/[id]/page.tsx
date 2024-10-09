@@ -31,6 +31,13 @@ interface Route {
     fieldNumber: string,
   }
 
+  interface Feed {
+    created_at: string;
+    entry_id: number;
+    [key: string]: any; // Allows for dynamic fields like field1, field2, etc.
+  }
+  
+
   // Define the type for the data you expect to fetch
 interface ChannelData {
   channel: {
@@ -43,11 +50,7 @@ interface ChannelData {
     updated_at: string;
     last_entry_id: number;
   };
-  feeds: Array<{
-    created_at: string;
-    entry_id: number;
-    field1: string;
-  }>;
+    feeds: Feed[];
 }
 
 
@@ -57,7 +60,7 @@ interface ChannelData {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null)
   const [totalCapacity, setTotalCapacity] = useState<number>(0);
-  const latestPassengers = data?.feeds.length ? data.feeds[0].field1 : '0';
+  const [latestPassengers, setLatestPassengers] = useState<string | null>(null)
 
 
   useEffect(() => {
@@ -103,8 +106,24 @@ interface ChannelData {
     fetchBuses();  
   }, []);
 
+  function getLastNonNullValue(feeds: Feed[], routeChannel: RouteChannel): string | null {
+    const dynamicField = "field" + routeChannel.fieldNumber;
+  
+    // Iterate from the last element to the first
+    for (let i = feeds.length - 1; i >= 0; i--) {
+      const feed = feeds[i];
+      const fieldValue = feed[dynamicField];
+  
+      // Check if the value is not `null` or the string `"null"`
+      if (fieldValue !== null && fieldValue !== "null" && fieldValue !== undefined) {
+        return fieldValue; // Return the first non-null value found
+      }
+    }
+    return null; // Return null if no non-null value is found
+  }
+
   useEffect(()=>{
-    fetch(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=1`)
+    fetch(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=20`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -112,12 +131,22 @@ interface ChannelData {
         return response.json();
       })
       .then(data => {
+        // console.log(data)
         setData(data); // Update the state with the fetched data
       })
       .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
       });
   },[channel])
+
+  // Example: Getting the last non-null value when data and channel are available
+  useEffect(() => {
+    if (data && channel) {
+      const lastNonNullValue = getLastNonNullValue(data.feeds, channel);
+      setLatestPassengers(lastNonNullValue)
+      console.log('Last non-null value for', channel.fieldNumber, ':', lastNonNullValue);
+    }
+  }, [data, channel]);
 
   if (!id) {
     return <div>Error: Route ID is missing.</div>;
