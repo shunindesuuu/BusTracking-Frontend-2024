@@ -7,55 +7,15 @@ import { useSession, signOut } from 'next-auth/react';
 import { PiSignOutBold } from 'react-icons/pi';
 import ProtectedComponent from './ProtectedComponent';
 import NavigationBar from './NavBar';
-import SelectComponent from './SelectComponent';
 import ProgressBar from './ProgessBar';
 
-interface SideBarProps {
-  onRouteSelect: (route: string) => void;
-}
-
-const SideBar: React.FC<SideBarProps> = ({ onRouteSelect }) => {
+const SideBar: React.FC = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState<string>('all');
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
-  };
-
-  interface RouteNames {
-    id: number;
-    routeName: string;
-    routeColor: string;
-  }
-
-  const [routes, setRoutes] = useState<RouteNames[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchRoutes = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/routes/index');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result: RouteNames[] = await response.json();
-        setRoutes(result);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRoutes();
-  }, []);
-
-  const handleRouteSelect = (route: string) => {
-    setSelectedRoute(route);
-    onRouteSelect(route);
   };
 
   return (
@@ -85,23 +45,7 @@ const SideBar: React.FC<SideBarProps> = ({ onRouteSelect }) => {
 
             <ProtectedComponent restrictedRoles={['admin']}>
               <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 space-y-4 w-full">
-                <p className="">Routes</p>
-
-                <SelectComponent
-                  routes={routes}
-                  onSelectRoute={handleRouteSelect}
-                />
-
                 <p className="mt-10 mb-2">Bus Information</p>
-
-                {routes
-                  .filter(route => selectedRoute === 'all' || route.routeName === selectedRoute)
-                  .map((filteredRoute) => (
-                    <div key={filteredRoute.id}>
-                      <p>{filteredRoute.routeName}</p>
-                      <div style={{ backgroundColor: filteredRoute.routeColor }} className="h-2 w-full"></div>
-                    </div>
-                  ))}
 
                 <div className="bg-white h-52 w-full rounded-md border">
                   <div className="bg-white border-b w-full h-1/4 flex items-center justify-between p-2 rounded-t-md">

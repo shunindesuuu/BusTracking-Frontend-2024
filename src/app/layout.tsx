@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { poppins } from '@/styles/font';
 import '@/styles/globals.css';
-import NavigationBar from '@/components/ui/NavBar';
 import SideBar from '@/components/ui/SideBar';
 import SessionWrapper from '@/components/SessionWrapper';
 import SessionHandler from '@/components/SessionHandler';
