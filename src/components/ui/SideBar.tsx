@@ -123,60 +123,39 @@ const SideBar: React.FC = () => {
               </div>
             </ProtectedComponent>
             <ProtectedComponent restrictedRoles={['admin', 'user']}>
-              <div className="flex flex-col items-center bg-white p-4 min-h-screen">
-                {/* Header */}
-                <header className="w-full flex justify-between items-center bg-green-500 p-2">
-                  <h1 className="text-white font-bold">Bus Number 4132</h1>
-                  <button className="text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+              <header className="w-full flex justify-between items-center mt-20 bg-green-500 p-2">
+                <h1 className="text-white font-bold">Bus Number 4132</h1>
+              </header>
+              <div className="my-4">
+                <label className="block text-black font-bold mb-2 text-center">
+                  Change Destination
+                </label>
+                <div className="flex justify-center items-center space-x-4">
+                  {routes.map((route) => (
+                    <button
+                      key={route.id}
+                      onClick={() => handleRouteSelect(route)}
+                      className={`p-2 rounded border ${
+                        selectedRoute?.id === route.id
+                          ? 'bg-green-700 text-white'
+                          : 'bg-green-500 text-white'
+                      }`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 7h5m0 0V2m0 5l-6 6m0 0l-6 6M9 13h5m0 0l-6 6m0 0V2"
-                      />
-                    </svg>
-                  </button>
-                </header>
-
-                {/* Route Selection */}
-                <div className="my-4">
-                  <label className="block text-black font-bold mb-2">
-                    Change Destination
-                  </label>
-                  <div className="flex space-x-4">
-                    {routes.map((route) => (
-                      <button
-                        key={route.id}
-                        onClick={() => handleRouteSelect(route)}
-                        className={`p-2 rounded border ${
-                          selectedRoute?.id === route.id
-                            ? 'bg-green-700 text-white'
-                            : 'bg-green-500 text-white'
-                        }`}
-                      >
-                        {route.routeName}
-                      </button>
-                    ))}
-                  </div>
+                      {route.routeName}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                {/* Seat Details */}
-                <div className="text-center">
-                  <p>Bus Capacity: {busCapacity}</p>
-                  <p>Taken: {takenSeats}</p>
-                  <p>Available: {availableSeats}</p>
-                  <p className="text-red-600 font-bold">
-                    Warning: {Math.round((takenSeats / busCapacity) * 100)}% Bus
-                    Capacity
-                  </p>
-                </div>
+              {/* Seat Details */}
+              <div className="text-center">
+                <p>Bus Capacity: {busCapacity}</p>
+                <p>Taken: {takenSeats}</p>
+                <p>Available: {availableSeats}</p>
+                <p className="text-red-600 font-bold">
+                  Warning: {Math.round((takenSeats / busCapacity) * 100)}% Bus
+                  Capacity
+                </p>
               </div>
             </ProtectedComponent>
 
