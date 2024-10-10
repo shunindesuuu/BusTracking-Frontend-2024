@@ -86,7 +86,7 @@ const CreateDriver: React.FC = () => {
       setStatus('');
       setSelectedBus(null);
       alert('Driver created successfully!');
-      router.push('/buses-assign-driver');
+      router.push('/buses/buses-view-driver');
     } catch (error) {
       setError((error as Error).message);
     }

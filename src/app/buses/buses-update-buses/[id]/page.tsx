@@ -14,7 +14,7 @@ const BusForm: React.FC = () => {
     busNumber: string;
     capacity: number;
     status: string;
-    driverId: string | null; // Driver ID may be null if no driver is assigned
+    driver: Driver | null; // Driver ID may be null if no driver is assigned
     routeId: string;
   }
 
@@ -64,9 +64,9 @@ const BusForm: React.FC = () => {
         setRouteId(result.routeId);
 
         // Fetch the driver based on the driver's ID from the bus data
-        if (result.driverId) {
+        if (result.driver) {
           const driverResponse = await fetch(
-            `http://localhost:4000/drivers/${result.driverId}`
+            `http://localhost:4000/drivers/${result.driver.id}`
           );
           if (driverResponse.ok) {
             const driverData: Driver = await driverResponse.json();
@@ -130,6 +130,10 @@ const BusForm: React.FC = () => {
       console.error('Error updating bus:', error);
     }
   };
+
+  useEffect(()=>{
+    console.log(selectedDriver)
+  },[])
 
   return (
     <div className="flex flex-col justify-start container mx-auto mt-16 p-4 gap-4 h-[calc(100vh-4rem)]">
