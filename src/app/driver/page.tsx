@@ -60,7 +60,7 @@ const Driver = () => {
   }
 
   return (
-    <ProtectedComponent restrictedRoles={['admin']}>
+    <ProtectedComponent restrictedRoles={['user']}>
       <div className="flex flex-col items-center bg-white p-4 min-h-screen">
         {/* Header */}
         <header className="w-full flex justify-between items-center bg-green-500 p-2">
