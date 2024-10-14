@@ -19,14 +19,17 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     routeColor: string;
     coordinates: Coordinate[];
   }
+
   interface Buses {
-    id: number;
+    id: string;
     routeId: string;
     busNumber: string;
     capacity: number;
     status: string;
     busName: string;
     route: RouteNames;
+    latitude: string;
+    longitude: string;
   }
 
   const [routes, setRoutes] = useState<RouteNames[]>([]);
@@ -54,23 +57,32 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
       }
     };
 
-    const fetchBuses = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/buses/index');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result: Buses[] = await response.json();
-        setBuses(result);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBuses();
+    
     fetchRoutes();
+  }, []);
+
+  const fetchBuses = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/thingspeak/bus-location');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result: Buses[] = await response.json();
+      setBuses(result);
+      console.log(result)
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data every 15 seconds
+  useEffect(() => {
+    fetchBuses(); // Fetch buses initially
+    const intervalId = setInterval(fetchBuses, 15000); // 15 seconds interval
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
 
   useEffect(() => {
@@ -85,7 +97,6 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
 
         mapRef.current = map;
 
-        // Set cursor styles
         const mapElement = document.getElementById('map')!;
         mapElement.style.cursor = 'default';
 
@@ -127,6 +138,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     };
   }, []);
 
+  // UseEffect for Routes
   useEffect(() => {
     if (!mapRef.current || routes.length === 0) return;
 
@@ -136,12 +148,6 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     });
     routeLayersRef.current = {};
 
-    // Remove existing bus markers
-    Object.values(busMarkersRef.current).forEach(marker => {
-      marker.remove();
-    });
-    busMarkersRef.current = {};
-
     // Add routes to the map
     routes.forEach(route => {
       if (selectedRoute === 'all' || selectedRoute === route.routeName) {
@@ -150,28 +156,49 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
         routeLayersRef.current[route.routeName] = polyline;
       }
     });
+  }, [routes, selectedRoute]);
 
-    // Add buses as circle markers with specified coordinates
-    buses.forEach((bus, index) => {
-      const busCoordinates: [number, number][] = [
-        [7.064032851953117, 125.6098222732544], // First bus
-        [7.069356519813487, 125.6197357177735], // Second bus
-        [7.079471319711519, 125.6080198287964],  // Third bus
-        [7.075574486204395, 125.6114101409912], // Fourth bus
-      ];
+// UseEffect for Buses
+useEffect(() => {
+  if (!mapRef.current || buses.length === 0) return;
 
-      L.circleMarker(busCoordinates[index], {
-        radius: 9,
-        color: bus.route.routeColor,
-        fillColor: bus.route.routeColor,
-        fillOpacity: 0.5,
-      }).addTo(mapRef.current!).bindPopup(`
+  // Remove existing bus markers
+  Object.values(busMarkersRef.current).forEach(marker => {
+    marker.remove();
+  });
+  busMarkersRef.current = {};
+
+  // Filter buses based on the selected route and only include those with valid coordinates
+  const filteredBuses = selectedRoute === 'all'
+    ? buses.filter(bus => bus.latitude !== null && bus.longitude !== null) // Show all buses with valid coordinates if "all" is selected
+    : buses.filter(bus => 
+        bus.route.routeName === selectedRoute && 
+        bus.latitude !== null && 
+        bus.longitude !== null
+      ); // Only show buses matching the selected route with valid coordinates
+
+  // Add buses as circle markers
+  filteredBuses.forEach(bus => {
+    const latitude = parseFloat(bus.latitude!); // Ensure latitude is a number
+    const longitude = parseFloat(bus.longitude!); // Ensure longitude is a number
+
+    const marker = L.circleMarker([latitude, longitude], {
+      radius: 9,
+      color: bus.route.routeColor,
+      fillColor: bus.route.routeColor,
+      fillOpacity: 0.5,
+    })
+      .addTo(mapRef.current!)
+      .bindPopup(`
         <b>Bus Name:</b> ${bus.busName} <br>
         <b>Bus Number:</b> ${bus.busNumber} <br>
         <b>Capacity:</b> ${bus.capacity} <br>
       `);
-    });
-  }, [routes, buses, selectedRoute]);
+
+    busMarkersRef.current[bus.id] = marker;
+  });
+}, [buses, selectedRoute]);
+
 
   return (
     <div
