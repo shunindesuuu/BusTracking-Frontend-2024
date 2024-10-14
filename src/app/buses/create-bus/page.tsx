@@ -19,7 +19,7 @@ interface Driver {
 const CreateBus: React.FC = () => {
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [driver, setDriver] = useState<string | null>(null); // Add driver state
+  const [driver, setDriver] = useState<string | null>(null);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const [isDriverOpen, setIsDriverOpen] = useState(false);
 

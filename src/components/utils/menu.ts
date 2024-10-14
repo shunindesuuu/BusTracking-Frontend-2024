@@ -18,14 +18,9 @@ const menu = [
         link: "/buses",
 
     },
+
     {
         id: 4,
-        title: "Drivers",
-        link: "/driver",
-
-    },
-    {
-        id: 5,
         title: "Users",
         link: "/users",
 
