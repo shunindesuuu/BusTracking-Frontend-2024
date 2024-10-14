@@ -8,33 +8,80 @@ import { PiSignOutBold } from 'react-icons/pi';
 import ProtectedComponent from './ProtectedComponent';
 import NavigationBar from './NavBar';
 import ProgressBar from './ProgessBar';
+import DisplayMap from '@/app/driver-map/page';
+
+interface RouteNames {
+  id: number;
+  routeName: string;
+  routeColor: string;
+}
 
 const SideBar: React.FC = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState<RouteNames | null>(null);
+  const [routes, setRoutes] = useState<RouteNames[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch the routes from the backend API
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch(
+          'http://localhost:4000/routes/index/coordinates'
+        );
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: RouteNames[] = await response.json();
+        setRoutes(result);
+        if (result.length > 0) {
+          setSelectedRoute(result[0]); // Default to the first route
+        }
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoutes();
+  }, []);
+  // Handle route selection
+  const handleRouteSelect = (route: RouteNames) => {
+    setSelectedRoute(route);
+  };
+
+  // Fake bus data for seat display
+  const busCapacity = 100;
+  const takenSeats = 75;
+  const availableSeats = busCapacity - takenSeats;
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
   return (
-    <div className='z-[500]'>
+    <div className="z-[500]">
       <ProtectedComponent restrictedRoles={['admin, user']}>
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
           <div
-            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-              } md:translate-x-0 md:static md:h-auto z-40`}
+            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${
+              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } md:translate-x-0 md:static md:h-auto z-40`}
           >
-            <ProtectedComponent restrictedRoles={['user']}>
+            <ProtectedComponent restrictedRoles={['user', 'driver']}>
               <div className="flex flex-col justify-start text-base mt-24 space-y-4">
                 {menu.map((item) => (
                   <Link
                     key={item.id}
                     href={item.link}
-                    className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${pathname === item.link ? 'bg-gray-200 text-green-500' : ''
-                      }`}
+                    className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${
+                      pathname === item.link ? 'bg-gray-200 text-green-500' : ''
+                    }`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     {item.title}
@@ -43,7 +90,7 @@ const SideBar: React.FC = () => {
               </div>
             </ProtectedComponent>
 
-            <ProtectedComponent restrictedRoles={['admin']}>
+            <ProtectedComponent restrictedRoles={['admin', 'driver']}>
               <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 space-y-4 w-full">
                 <p className="mt-10 mb-2">Bus Information</p>
 
@@ -73,6 +120,42 @@ const SideBar: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </ProtectedComponent>
+            <ProtectedComponent restrictedRoles={['admin', 'user']}>
+              <header className="w-full flex justify-between items-center mt-20 bg-green-500 p-2">
+                <h1 className="text-white font-bold">Bus Number 4132</h1>
+              </header>
+              <div className="my-4">
+                <label className="block text-black font-bold mb-2 text-center">
+                  Change Destination
+                </label>
+                <div className="flex justify-center items-center space-x-4">
+                  {routes.map((route) => (
+                    <button
+                      key={route.id}
+                      onClick={() => handleRouteSelect(route)}
+                      className={`p-2 rounded border ${
+                        selectedRoute?.id === route.id
+                          ? 'bg-green-700 text-white'
+                          : 'bg-green-500 text-white'
+                      }`}
+                    >
+                      {route.routeName}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Seat Details */}
+              <div className="text-center">
+                <p>Bus Capacity: {busCapacity}</p>
+                <p>Taken: {takenSeats}</p>
+                <p>Available: {availableSeats}</p>
+                <p className="text-red-600 font-bold">
+                  Warning: {Math.round((takenSeats / busCapacity) * 100)}% Bus
+                  Capacity
+                </p>
               </div>
             </ProtectedComponent>
 

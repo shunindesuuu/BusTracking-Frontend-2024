@@ -3,6 +3,7 @@ import DrawRoute from '@/components/ui/DrawRoute';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface RouteNames {
   id: string;
@@ -19,7 +20,7 @@ interface Driver {
 const CreateBus: React.FC = () => {
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [driver, setDriver] = useState<string | null>(null); // Add driver state
+  const [driver, setDriver] = useState<string | null>(null);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const [isDriverOpen, setIsDriverOpen] = useState(false);
 
@@ -98,6 +99,28 @@ const CreateBus: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
+    // Validation
+    if (!busName.trim()) {
+      toast.error('Please enter a bus name');
+      return;
+    }
+    if (!busNumber.trim()) {
+      toast.error('Please enter a bus number');
+      return;
+    }
+    if (!capacity.trim()) {
+      toast.error('Please enter the bus capacity');
+      return;
+    }
+    if (!status.trim()) {
+      toast.error('Please enter the bus status');
+      return;
+    }
+    if (!selectedRoute) {
+      toast.error('Please select a route');
+      return;
+    }
+
     // Create bus data
     const busData = {
       busName,
@@ -128,16 +151,17 @@ const CreateBus: React.FC = () => {
       setStatus('');
       setSelectedRoute(null);
       setSelectedDriver(null);
-      alert('Bus created successfully!');
+      toast.success('Bus created successfully!');
       router.push('/buses'); // Redirect to buses page after successful creation
     } catch (error) {
-      setError((error as Error).message);
+      toast.error((error as Error).message);
     }
   };
 
   return (
     <ProtectedComponent restrictedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
+        <Toaster position="top-center" />
         <div className="bg-white shadow-md rounded-lg w-full p-4">
           <div className="bg-green-500 text-white text-center text-lg font-semibold py-4 rounded-t-lg">
             Create Bus
