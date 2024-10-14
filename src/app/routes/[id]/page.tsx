@@ -106,6 +106,20 @@ interface ChannelData {
     fetchBuses();  
   }, []);
 
+  // Function to fetch data from ThingSpeak
+  const fetchData = async () => {
+    try {
+        const response = await fetch(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=20`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setData(data); // Update the state with the fetched data
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+};
+
   function getLastNonNullValue(feeds: Feed[], routeChannel: RouteChannel): string | null {
     const dynamicField = "field" + routeChannel.fieldNumber;
   
@@ -122,22 +136,19 @@ interface ChannelData {
     return null; // Return null if no non-null value is found
   }
 
-  useEffect(()=>{
-    fetch(`https://api.thingspeak.com/channels/${channel?.channelId}/fields/${channel?.fieldNumber}.json?results=20`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // console.log(data)
-        setData(data); // Update the state with the fetched data
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-      });
-  },[channel])
+  
+
+  useEffect(() => {
+    fetchData(); // Initial fetch
+
+    // Set up interval to fetch data every 15 seconds
+    const intervalId = setInterval(fetchData, 15000);
+
+    // Clear interval on component unmount
+    return () => {
+        clearInterval(intervalId);
+    };
+}, [channel]); 
 
   // Example: Getting the last non-null value when data and channel are available
   useEffect(() => {
@@ -156,10 +167,10 @@ interface ChannelData {
 
 
   return (
-    <div className="flex flex-col justify-center container mx-auto mt-16 p-5">
-      <div className='flex justify-between items-center'>
-      <div>{routeName}</div>
-      <Link id='editbutton' href={`${id}/update/${id}`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit px-5 py-1 rounded-md'>Edit</Link>
+    <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
+      <div className='flex justify-between items-center mt-28'>
+        <div>{routeName}</div>
+        <Link id='editbutton' href={`${id}/update/${id}`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit px-5 py-1 rounded-md'>Edit</Link>
       </div>
       <div className="flex justify-center container mx-auto gap-4 mt-3">
         <Link
@@ -182,29 +193,42 @@ interface ChannelData {
           <div>TBA</div>
         </div>
       </div>
-
+  
       <div className="w-full mt-5 h-fit flex gap-3 flex-col">
         <div>
           <div>Live Passenger Count</div>
-            {channel ? (
-              <iframe
-              src={`https://api.thingspeak.com/channels/${channel?.channelId}/charts/${channel?.fieldNumber}?dynamic=true`}
-              className="w-full  h-[250px] border"
+          {channel ? (
+            <iframe
+              src={`https://api.thingspeak.com/channels/${channel?.channelId}/charts/${channel?.fieldNumber}?dynamic=true&width=auto&height=auto`}
+              className="w-full h-[250px] border" 
               frameBorder="0"
               allowFullScreen
             ></iframe>
-            )
-            :(
-              <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
-            )}
-
+          ) : (
+            <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
+          )}
         </div>
-
+  
         <div>
           <div>Average Per Hour</div>
           {channel ? (
+            <iframe
+              src={`https://api.thingspeak.com/channels/${channel.channelId}/charts/${channel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto`}
+              className="w-full h-[250px] border"
+              frameBorder="0"
+              allowFullScreen
+            ></iframe>
+          ) : (
+            <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
+          )}
+        </div>
+  
+        <div>
+          <div>Average Per Day</div>
+          <div className="w-full h-fit bg-gray-200 rounded-lg">
+            {channel ? (
               <iframe
-                src={`https://api.thingspeak.com/channels/${channel.channelId}/charts/${channel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour`}
+                src={`https://api.thingspeak.com/channels/${channel?.channelId}/charts/${channel?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day&width=auto&height=auto`}
                 className="w-full h-[250px] border"
                 frameBorder="0"
                 allowFullScreen
@@ -212,24 +236,12 @@ interface ChannelData {
             ) : (
               <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
             )}
-        </div>
-
-        <div>
-          <div>Average Per Day</div>
-          <div className="w-full h-fit bg-gray-200 rounded-lg">
-            {channel ?(<iframe
-              src={`https://api.thingspeak.com/channels/${channel?.channelId}/charts/${channel?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day`}
-              className="w-full h-[250px] border"
-              frameBorder="0"
-              allowFullScreen
-            ></iframe>):(
-              <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
-            )}
-          </div>
+          </div> 
         </div>
       </div>
     </div>
   );
+  
 }
 
 
