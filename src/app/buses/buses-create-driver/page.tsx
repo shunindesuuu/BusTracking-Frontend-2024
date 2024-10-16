@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { redirect, useRouter } from 'next/navigation';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import toast, { Toaster } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 
 interface Bus {
@@ -59,6 +60,7 @@ const CreateDriver: React.FC = () => {
         setBuses(result);
       } catch (error) {
         setError((error as Error).message);
+        toast.error(`Error loading buses: ${(error as Error).message}`);
       } finally {
         setLoading(false);
       }
@@ -69,6 +71,24 @@ const CreateDriver: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Form validation
+    if (!firstName.trim()) {
+      toast.error('Please enter a first name');
+      return;
+    }
+    if (!lastName.trim()) {
+      toast.error('Please enter a last name');
+      return;
+    }
+    if (!phone.trim()) {
+      toast.error('Please enter a phone number');
+      return;
+    }
+    if (!status.trim()) {
+      toast.error('Please enter a status');
+      return;
+    }
 
     const driverData = {
       firstName,
@@ -92,6 +112,10 @@ const CreateDriver: React.FC = () => {
         throw new Error('Failed to create driver');
       }
 
+      const createdDriver = await response.json();
+      console.log('Driver created successfully:', createdDriver);
+      toast.success('Driver created successfully');
+
       setFirstName('');
       setMiddleName('');
       setLastName('');
@@ -101,13 +125,15 @@ const CreateDriver: React.FC = () => {
       alert('Driver created successfully!');
       router.push('/buses/buses-view-driver');
     } catch (error) {
-      setError((error as Error).message);
+      console.error('Error creating driver:', error);
+      toast.error(`Error creating driver: ${(error as Error).message}`);
     }
   };
 
   return (
     <ProtectedComponent restrictedRoles={['user']}>
       <div className="container mx-auto mt-20 p-4">
+        <Toaster position="top-center" />
         <div className="bg-white shadow-md rounded-lg w-full p-4">
           <div className="bg-green-500 text-white text-center text-lg font-semibold py-4 rounded-t-lg">
             Create Driver
