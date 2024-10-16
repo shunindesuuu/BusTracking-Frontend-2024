@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 
 const DriverForm: React.FC = () => {
   const router = useRouter();
@@ -62,7 +63,7 @@ const DriverForm: React.FC = () => {
         setPhone(result.phone);
         setStatus(result.status);
         setBusId(result.bus?.id || null);
-        console.log(result)
+        console.log(result);
 
         if (result.bus) {
           const busResponse = await fetch(
@@ -91,6 +92,7 @@ const DriverForm: React.FC = () => {
         setBuses(result);
       } catch (error) {
         setError((error as Error).message);
+        toast.error(`Error loading buses: ${(error as Error).message}`);
       }
     };
 
@@ -100,6 +102,24 @@ const DriverForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Form validation
+    if (!firstName.trim()) {
+      toast.error('Please enter a first name');
+      return;
+    }
+    if (!lastName.trim()) {
+      toast.error('Please enter a last name');
+      return;
+    }
+    if (!phone.trim()) {
+      toast.error('Please enter a phone number');
+      return;
+    }
+    if (!status.trim()) {
+      toast.error('Please enter a status');
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:4000/drivers/update`, {
@@ -124,16 +144,19 @@ const DriverForm: React.FC = () => {
 
       const updatedDriver = await response.json();
       console.log('Driver updated successfully:', updatedDriver);
+      toast.success('Driver updated successfully');
 
       // Redirect to the drivers page after successful update
-      router.push('/drivers');
+      router.push('/buses/buses-view-driver');
     } catch (error) {
       console.error('Error updating driver:', error);
+      toast.error(`Error updating driver: ${(error as Error).message}`);
     }
   };
 
   return (
     <div className="flex flex-col justify-start container mx-auto mt-16 p-4 gap-4 h-[calc(100vh-4rem)]">
+      <Toaster position="top-center" />
       <form onSubmit={handleSubmit}>
         <div className="flex gap-4 w-full">
           <div className="flex flex-col">

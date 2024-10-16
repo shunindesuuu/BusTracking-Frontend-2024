@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 
 const BusForm: React.FC = () => {
   const router = useRouter();
@@ -100,6 +101,28 @@ const BusForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Form validation
+    if (!busName.trim()) {
+      toast.error('Please enter a bus name');
+      return;
+    }
+    if (!busNumber.trim()) {
+      toast.error('Please enter a bus number');
+      return;
+    }
+    if (!capacity) {
+      toast.error('Please enter the bus capacity');
+      return;
+    }
+    if (!status.trim()) {
+      toast.error('Please enter the bus status');
+      return;
+    }
+    if (!routeId.trim()) {
+      toast.error('Please enter a route ID');
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:4000/buses/update`, {
         method: 'PUT',
@@ -123,20 +146,23 @@ const BusForm: React.FC = () => {
 
       const updatedBus = await response.json();
       console.log('Bus updated successfully:', updatedBus);
+      toast.success('Bus updated successfully');
 
       // Redirect to the buses page after successful update
       router.push('/buses');
     } catch (error) {
       console.error('Error updating bus:', error);
+      toast.error(`Error loading bus data: ${(error as Error).message}`);
     }
   };
 
-  useEffect(()=>{
-    console.log(selectedDriver)
-  },[])
+  useEffect(() => {
+    console.log(selectedDriver);
+  }, []);
 
   return (
     <div className="flex flex-col justify-start container mx-auto mt-16 p-4 gap-4 h-[calc(100vh-4rem)]">
+      <Toaster position="top-center" />
       <form onSubmit={handleSubmit}>
         <div className="flex gap-4 w-full">
           <div className="flex flex-col">
