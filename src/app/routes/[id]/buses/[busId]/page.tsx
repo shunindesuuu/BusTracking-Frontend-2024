@@ -1,57 +1,140 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 const Page = () => {
-  const { id: routeId, busId } = useParams(); // Access both routeId and busId
+  const { busId } = useParams(); 
 
-  type BusDetails = {
-    id: string;
+  interface Bus {
+    id: number;
+    routeId: string;
     busNumber: string;
     capacity: number;
-    passengerCount: number;
-    dailyAverage: number;
-  };
+    status: string;
+    busName: string;
+    passCount: string;
+    route: Route;
+    busChannel: BusChannel;
+  }
+  interface Route {
+    id: string;
+    routeName: string;
+    routeColor: string;
+  }
+
+  interface BusChannel {
+    id: string,
+    channelId: string,
+    fieldNumber: string,
+  }
+
+  const [bus, setBus] = useState<Bus | null>(null);  // Changed to a single bus object or null
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null)
   
-  const busData: BusDetails[] = [
-    { id: "84383809-ee09-482c-9c89-bc643494ec06", busNumber: "101", capacity: 50, passengerCount: 40, dailyAverage: 37 },
-    { id: "fe67db45-3925-490a-a999-b2de6a4ff659", busNumber: "202", capacity: 60, passengerCount: 55, dailyAverage: 52 },
-    { id: "3", busNumber: "303", capacity: 45, passengerCount: 42, dailyAverage: 39 },
-    { id: "4", busNumber: "404", capacity: 55, passengerCount: 50, dailyAverage: 48 },
-  ];
+
+
+  useEffect(() => {
+    console.log(busId)
+    const fetchBuses = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/thingspeak/bus-passenger/${busId}`);  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: Bus = await response.json();
+        console.log(response)
+        setBus(result);
+      } catch (error) {
+        setError((error as Error).message);  
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBuses();  
+    
+    // // Set up interval to fetch buses every 15 seconds
+    //   const intervalId = setInterval(fetchBuses, 15000);
+
+    //   // Clear interval on component unmount
+    //   return () => {
+    //       clearInterval(intervalId);
+    //   };
+  }, []);
 
   if (!busId) {
     return <div>Error: Bus ID is missing.</div>;
   }
 
-  const busDetails = busData.find(bus => bus.id === busId);
 
-  if (!busDetails) {
-    return <div>Bus not found.</div>;
-  }
 
   return (
-    <div className="flex flex-col justify-start container mx-auto mt-16 p-4">
-     <div className='flex'>
-        <p>Route {routeId}/</p>
-        <p>Bus {busDetails.busNumber}</p>
-     </div>
-      <p className='mt-2'>Capacity: {busDetails.capacity}</p>  
-
-      {/* Additional Full-Width Containers */}
-      <div className="flex flex-col bg-gray-100 p-4 mt-4 rounded-md shadow-sm">
-          <p className="font-medium text-gray-800">Container 1</p>
-          <p className="text-gray-600">Content for container 1.</p>
+    <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
+        <div>{bus?.busName}</div>
+      <div className="flex justify-center container mx-auto gap-4 mt-3">
+      <div className="flex-grow flex-col h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all">
+          <div>Bus Route</div>
+          <div>{bus?.route.routeName}</div>
         </div>
-        <div className="flex flex-col bg-gray-100 p-4 mt-4 rounded-md shadow-sm">
-          <p className="font-medium text-gray-800">Container 2</p>
-          <p className="text-gray-600">Content for container 2.</p>
+        
+        <div className="flex-grow flex-col h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all">
+          <div>Capacity</div>
+          <div>{bus?.capacity}</div>
         </div>
-        <div className="flex flex-col bg-gray-100 p-4 mt-4 rounded-md shadow-sm">
-          <p className="font-medium text-gray-800">Container 3</p>
-          <p className="text-gray-600">Content for container 3.</p>
+        <div className="flex-grow flex-col h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all">
+          <div>Passengers</div>
+          <div>{bus?.passCount}</div>
         </div>
+        
+      </div>
+  
+      <div className="w-full mt-5 h-fit flex gap-3 flex-col">
+        <div>
+          <div>Live Passenger Count</div>
+          {bus ? (
+            <iframe
+              src={`https://api.thingspeak.com/channels/${bus.busChannel?.channelId}/charts/${bus.busChannel?.fieldNumber}?dynamic=true&width=auto&height=auto`}
+              className="w-full h-[250px] border" 
+              frameBorder="0"
+              allowFullScreen
+            ></iframe>
+          ) : (
+            <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
+          )}
+        </div>
+  
+        <div>
+          <div>Average Per Hour</div>
+          {bus ? (
+            <iframe
+              src={`https://api.thingspeak.com/channels/${bus.busChannel.channelId}/charts/${bus.busChannel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto`}
+              className="w-full h-[250px] border"
+              frameBorder="0"
+              allowFullScreen
+            ></iframe>
+          ) : (
+            <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
+          )}
+        </div>
+  
+        <div>
+          <div>Average Per Day</div>
+          <div className="w-full h-fit bg-gray-200 rounded-lg">
+            {bus ? (
+              <iframe
+                src={`https://api.thingspeak.com/channels/${bus.busChannel?.channelId}/charts/${bus.busChannel?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day&width=auto&height=auto`}
+                className="w-full h-[250px] border"
+                frameBorder="0"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <div className="w-full h-60 bg-gray-100 rounded-lg flex justify-center items-center text-red-500">Not Connected</div>
+            )}
+          </div> 
+        </div>
+      </div>
     </div>
   );
 }
