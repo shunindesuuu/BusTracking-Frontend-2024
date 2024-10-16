@@ -1,8 +1,9 @@
 'use client';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 
 interface Driver {
@@ -34,6 +35,18 @@ const BusesAssignDriver: React.FC = () => {
   const handleCreateClick = () => {
     router.push('/buses/buses-create-driver'); // Redirects to the create driver page
   };
+
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,7 +138,7 @@ const BusesAssignDriver: React.FC = () => {
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     <Link
-                    
+
                       href={`buses-update-driver/${driver.id}`}
                       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >

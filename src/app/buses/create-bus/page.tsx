@@ -1,9 +1,10 @@
 'use client';
 import DrawRoute from '@/components/ui/DrawRoute';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import toast, { Toaster } from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 
 interface RouteNames {
   id: string;
@@ -18,6 +19,7 @@ interface Driver {
 }
 
 const CreateBus: React.FC = () => {
+
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [driver, setDriver] = useState<string | null>(null);
@@ -44,6 +46,18 @@ const CreateBus: React.FC = () => {
   const handleBackClick = () => {
     router.push('/buses');
   };
+
+  const { data: session } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   const handleRouteButtonClick = () => {
     setIsRouteOpen(!isRouteOpen);

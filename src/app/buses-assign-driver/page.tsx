@@ -1,6 +1,7 @@
 'use client';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
-import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 interface Driver {
@@ -18,6 +19,18 @@ interface Driver {
 }
 
 const BusesAssignDriver: React.FC = () => {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
+
   const router = useRouter();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

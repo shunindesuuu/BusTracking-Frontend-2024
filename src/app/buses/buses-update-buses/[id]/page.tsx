@@ -1,7 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { redirect, useParams, useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 
 const BusForm: React.FC = () => {
   const router = useRouter();
@@ -48,6 +49,18 @@ const BusForm: React.FC = () => {
     setSelectedDriver(driver);
     setIsDriverOpen(false);
   };
+
+  const { data: session } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   // Fetch the bus data when the component loads
   useEffect(() => {

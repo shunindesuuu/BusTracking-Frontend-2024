@@ -1,7 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import { useSession } from 'next-auth/react';
 
 interface Bus {
   id: string;
@@ -34,6 +35,18 @@ const CreateDriver: React.FC = () => {
     setSelectedBus({ id: bus.id, name: bus.busName });
     setIsBusOpen(false);
   };
+
+  const { data: session } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   useEffect(() => {
     const fetchBuses = async () => {

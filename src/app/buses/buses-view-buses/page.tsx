@@ -1,7 +1,8 @@
 'use client';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 interface Driver {
@@ -28,6 +29,18 @@ interface Bus {
 }
 
 const BusesViewBuses: React.FC = () => {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
+
   const router = useRouter();
   const [buses, setBuses] = useState<Bus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

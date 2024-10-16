@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import DisplayMap from '@/components/ui/DisplayMap';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 interface RouteNames {
   id: number;
@@ -10,6 +12,18 @@ interface RouteNames {
 }
 
 const Driver = () => {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'driver' && session.user?.role !== 'admin') {
+    redirect('/');
+  }
+
   const [selectedRoute, setSelectedRoute] = useState<RouteNames | null>(null);
   const [routes, setRoutes] = useState<RouteNames[]>([]);
   const [loading, setLoading] = useState(true);

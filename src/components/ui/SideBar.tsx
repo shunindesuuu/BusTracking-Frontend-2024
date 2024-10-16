@@ -69,9 +69,8 @@ const SideBar: React.FC = () => {
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
           <div
-            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 md:static md:h-auto z-40`}
+            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+              } md:translate-x-0 md:static md:h-auto z-40`}
           >
             <ProtectedComponent restrictedRoles={['user', 'driver']}>
               <div className="flex flex-col justify-start text-base mt-24 space-y-4">
@@ -79,9 +78,8 @@ const SideBar: React.FC = () => {
                   <Link
                     key={item.id}
                     href={item.link}
-                    className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${
-                      pathname === item.link ? 'bg-gray-200 text-green-500' : ''
-                    }`}
+                    className={`nav-item px-6 py-3 text-black hover:text-[#34C759] rounded-md border border-1 ${pathname === item.link ? 'bg-gray-200 text-green-500' : ''
+                      }`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     {item.title}
@@ -123,7 +121,7 @@ const SideBar: React.FC = () => {
               </div>
             </ProtectedComponent>
             <ProtectedComponent restrictedRoles={['admin', 'user']}>
-              <header className="w-full flex justify-between items-center mt-20 bg-green-500 p-2">
+              <header className="w-full flex justify-between items-center mt-24 bg-green-500 p-2">
                 <h1 className="text-white font-bold">Bus Number 4132</h1>
               </header>
               <div className="my-4">
@@ -135,11 +133,10 @@ const SideBar: React.FC = () => {
                     <button
                       key={route.id}
                       onClick={() => handleRouteSelect(route)}
-                      className={`p-2 rounded border ${
-                        selectedRoute?.id === route.id
-                          ? 'bg-green-700 text-white'
-                          : 'bg-green-500 text-white'
-                      }`}
+                      className={`p-2 rounded border ${selectedRoute?.id === route.id
+                        ? 'bg-green-700 text-white'
+                        : 'bg-green-500 text-white'
+                        }`}
                     >
                       {route.routeName}
                     </button>
