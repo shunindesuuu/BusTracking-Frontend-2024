@@ -30,6 +30,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     route: RouteNames;
     latitude: string;
     longitude: string;
+    passCount: string;
   }
 
   const [routes, setRoutes] = useState<RouteNames[]>([]);
@@ -61,26 +62,58 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     fetchRoutes();
   }, []);
 
-  const fetchBuses = async () => {
-    try {
+  
+  
+const fetchBuses = async () => {
+  try {
       const response = await fetch('http://localhost:4000/thingspeak/bus-location');
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok');
       }
-      const result: Buses[] = await response.json();
-      setBuses(result);
-      console.log(result)
-    } catch (error) {
+      const busLocationData: Buses[] = await response.json();
+      return busLocationData; // Return the fetched data
+  } catch (error) {
       setError((error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return []; // Return an empty array on error
+  }
+};
+
+const fetchBusPassCount = async () => {
+  try {
+      const response = await fetch('http://localhost:4000/thingspeak/all-bus-passengers');
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      const busPassCountData: Buses[] = await response.json();
+      return busPassCountData; // Return the fetched data
+  } catch (error) {
+      setError((error as Error).message);
+      return []; // Return an empty array on error
+  }
+};
+
+const fetchData = async () => {
+  setLoading(true);
+  const busesData = await fetchBuses();
+  const passCountData = await fetchBusPassCount();
+
+  // Combine the results based on the bus ID
+  const combinedBuses = busesData.map(bus => {
+      const passCountEntry = passCountData.find(p => p.id === bus.id);
+      return {
+          ...bus,
+          passCount: passCountEntry ? passCountEntry.passCount : '0', // Set to '0' if no count found
+      };
+  });
+
+  setBuses(combinedBuses);
+  setLoading(false);
+};
 
   // Fetch data every 15 seconds
   useEffect(() => {
-    fetchBuses(); // Fetch buses initially
-    const intervalId = setInterval(fetchBuses, 15000); // 15 seconds interval
+    fetchData(); // Fetch buses initially
+    const intervalId = setInterval(fetchData, 15000); // 15 seconds interval
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
@@ -193,6 +226,8 @@ useEffect(() => {
         <b>Bus Name:</b> ${bus.busName} <br>
         <b>Bus Number:</b> ${bus.busNumber} <br>
         <b>Capacity:</b> ${bus.capacity} <br>
+        <b>Passengers:</b> ${bus.passCount} <br>
+        <b>Available Seats:</b> ${bus.capacity - parseInt(bus.passCount, 10)} <br>
       `);
 
     busMarkersRef.current[bus.id] = marker;
