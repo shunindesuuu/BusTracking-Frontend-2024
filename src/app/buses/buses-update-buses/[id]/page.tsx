@@ -32,6 +32,7 @@ const BusForm: React.FC = () => {
 
   const [busName, setBusName] = useState<string>('');
   const [busNumber, setBusNumber] = useState<string>('');
+  const [busChannel, setBusChannel] = useState<string>('');
   const [capacity, setCapacity] = useState<number | ''>('');
   const [status, setStatus] = useState<string>('');
   const [routeId, setRouteId] = useState<string>('');
@@ -133,10 +134,12 @@ const BusForm: React.FC = () => {
           id,
           busName,
           busNumber,
+          busChannel,
           capacity,
           status,
           driverId: selectedDriver ? selectedDriver.id : null, // Send the selected driver ID
           routeId,
+
         }),
       });
 
@@ -182,6 +185,16 @@ const BusForm: React.FC = () => {
               placeholder="e.g. 1234"
               value={busNumber}
               onChange={(e) => setBusNumber(e.target.value)}
+              className="h-fit w-fit p-2 border-2 rounded-md"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="busChannel">Bus Channel</label>
+            <input
+              id="busChannel"
+              placeholder="e.g. 2629457"
+              value={busChannel}
+              onChange={(e) => setBusChannel(e.target.value)}
               className="h-fit w-fit p-2 border-2 rounded-md"
             />
           </div>

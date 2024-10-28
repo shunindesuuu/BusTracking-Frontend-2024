@@ -38,6 +38,9 @@ const CreateBus: React.FC = () => {
   const [busNumber, setBusNumber] = useState('');
   const [capacity, setCapacity] = useState('');
   const [status, setStatus] = useState('');
+  const [busChannel, setBusChannel] = useState('');
+  const [latFieldNumber, setLatFieldNumber] = useState('');
+  const [longFieldNumber, setLongFieldNumber] = useState('');
 
   const router = useRouter();
 
@@ -125,6 +128,9 @@ const CreateBus: React.FC = () => {
     const busData = {
       busName,
       busNumber,
+      busChannel,
+      latFieldNumber,
+      longFieldNumber,
       capacity,
       status,
       driverId: selectedDriver ? selectedDriver.id : null,
@@ -147,6 +153,9 @@ const CreateBus: React.FC = () => {
       // Optionally, you can reset the form and selected route here
       setBusName('');
       setBusNumber('');
+      setBusChannel('');
+      setLatFieldNumber('');
+      setLongFieldNumber('');
       setCapacity('');
       setStatus('');
       setSelectedRoute(null);
@@ -198,6 +207,57 @@ const CreateBus: React.FC = () => {
                 value={busNumber}
                 onChange={(e) => setBusNumber(e.target.value)} // Handle change
                 className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+              />
+            </div>
+
+            <div className="mb-4 mt-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="busName"
+              >
+                Bus Channel  {/* for thingspeak */}
+              </label>
+              <input
+                type="text"
+                id="busChannel"
+                name="busChannel"
+                value={busChannel}
+                onChange={(e) => setBusChannel(e.target.value)} // Handle change
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="mb-4 mt-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="latFieldNumber"
+              >
+                Bus Latitude Number  {/* for thingspeak */}
+              </label>
+              <input
+                type="text"
+                id="latFieldNumber"
+                name="latFieldNumber"
+                value={latFieldNumber}
+                onChange={(e) => setLatFieldNumber(e.target.value)} // Handle change
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="mb-4 mt-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="longFieldNumber"
+              >
+                Bus Longitude Number  {/* for thingspeak */}
+              </label>
+              <input
+                type="text"
+                id="lognFieldNumber"
+                name="longFieldNumber"
+                value={longFieldNumber}
+                onChange={(e) => setLongFieldNumber(e.target.value)} // Handle change
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
 
