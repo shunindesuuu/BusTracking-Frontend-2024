@@ -310,7 +310,7 @@ const CreateBus: React.FC = () => {
 
                 {/* Route Dropdown Menu */}
                 {isRouteOpen && (
-                  <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1">
                       {loading && (
                         <div className="px-4 py-2 text-sm text-gray-700">
@@ -378,7 +378,7 @@ const CreateBus: React.FC = () => {
                           <div
                             key={driver.id}
                             onClick={() => handleDriverSelect(driver)}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer z-50"
                           >
                             {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
                           </div>
