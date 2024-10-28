@@ -38,9 +38,11 @@ const CreateBus: React.FC = () => {
   const [busNumber, setBusNumber] = useState('');
   const [capacity, setCapacity] = useState('');
   const [status, setStatus] = useState('');
-  const [busChannel, setBusChannel] = useState('');
+  const [busLocationChannel, setBusChannel] = useState('');
   const [latFieldNumber, setLatFieldNumber] = useState('');
   const [longFieldNumber, setLongFieldNumber] = useState('');
+  const [busPassengerChannel, setBusPassengerChannel] = useState('');
+  const [fieldNumber, setFieldNumber] = useState('');
 
   const router = useRouter();
 
@@ -128,9 +130,11 @@ const CreateBus: React.FC = () => {
     const busData = {
       busName,
       busNumber,
-      busChannel,
+      busLocationChannel,
       latFieldNumber,
       longFieldNumber,
+      busPassengerChannel,
+      fieldNumber,
       capacity,
       status,
       driverId: selectedDriver ? selectedDriver.id : null,
@@ -210,55 +214,101 @@ const CreateBus: React.FC = () => {
               />
             </div>
 
-            <div className="mb-4 mt-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="busName"
-              >
-                Bus Channel  {/* for thingspeak */}
-              </label>
-              <input
-                type="text"
-                id="busChannel"
-                name="busChannel"
-                value={busChannel}
-                onChange={(e) => setBusChannel(e.target.value)} // Handle change
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+            <div>
+              <h2 className="block text-gray-700 text-sm font-bold">
+                Bus Location Channel
+              </h2>
+              <div className="flex gap-4 mb-4 mt-2">
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="busChannel"
+                  >
+                    Channel ID
+                  </label>
+                  <input
+                    type="text"
+                    id="busChannel"
+                    name="busChannel"
+                    value={busLocationChannel}
+                    onChange={(e) => setBusChannel(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
 
-            <div className="mb-4 mt-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="latFieldNumber"
-              >
-                Bus Latitude Number  {/* for thingspeak */}
-              </label>
-              <input
-                type="text"
-                id="latFieldNumber"
-                name="latFieldNumber"
-                value={latFieldNumber}
-                onChange={(e) => setLatFieldNumber(e.target.value)} // Handle change
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="latFieldNumber"
+                  >
+                    Bus Latitude Number
+                  </label>
+                  <input
+                    type="text"
+                    id="latFieldNumber"
+                    name="latFieldNumber"
+                    value={latFieldNumber}
+                    onChange={(e) => setLatFieldNumber(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
 
-            <div className="mb-4 mt-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="longFieldNumber"
-              >
-                Bus Longitude Number  {/* for thingspeak */}
-              </label>
-              <input
-                type="text"
-                id="lognFieldNumber"
-                name="longFieldNumber"
-                value={longFieldNumber}
-                onChange={(e) => setLongFieldNumber(e.target.value)} // Handle change
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="longFieldNumber"
+                  >
+                    Bus Longitude Number
+                  </label>
+                  <input
+                    type="text"
+                    id="longFieldNumber"
+                    name="longFieldNumber"
+                    value={longFieldNumber}
+                    onChange={(e) => setLongFieldNumber(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </div>
+
+                <h2 className="block text-gray-700 text-sm font-bold">
+                Bus Passenger Channel
+              </h2>
+              <div className="flex gap-4 mb-4 mt-4">
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="passengerChannel"
+                  >
+                    Channel ID
+                  </label>
+                  <input
+                    type="text"
+                    id="passengerChannel"
+                    name="passengerChannel"
+                    value={busPassengerChannel}
+                    onChange={(e) => setBusPassengerChannel(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="fieldNumber"
+                  >
+                    Field Number
+                  </label>
+                  <input
+                    type="text"
+                    id="fieldNumber"
+                    name="fieldNumber"
+                    value={fieldNumber}
+                    onChange={(e) => setFieldNumber(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="mb-4">
