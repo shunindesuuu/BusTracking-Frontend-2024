@@ -38,6 +38,7 @@ const CreateBus: React.FC = () => {
   const [busNumber, setBusNumber] = useState('');
   const [capacity, setCapacity] = useState('');
   const [status, setStatus] = useState('');
+
   const [busLocationChannel, setBusChannel] = useState('');
   const [latFieldNumber, setLatFieldNumber] = useState('');
   const [longFieldNumber, setLongFieldNumber] = useState('');
@@ -96,6 +97,7 @@ const CreateBus: React.FC = () => {
         setError((error as Error).message);
       }
     };
+    
 
     fetchRoutes();
     fetchDrivers();
@@ -180,38 +182,78 @@ const CreateBus: React.FC = () => {
             Create Bus
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="mb-4 mt-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="busName"
-              >
-                Bus Name
-              </label>
-              <input
-                type="text"
-                id="busName"
-                name="busName"
-                value={busName}
-                onChange={(e) => setBusName(e.target.value)} // Handle change
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+            <div className="flex gap-4 mb-4 mt-4">
+              <div className="flex-1">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="busName"
+                  >
+                    Bus Name
+                  </label>
+                  <input
+                    type="text"
+                    id="busName"
+                    name="busName"
+                    value={busName}
+                    onChange={(e) => setBusName(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
 
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="busNumber"
-              >
-                Bus Number
-              </label>
-              <input
-                type="text"
-                id="busNumber"
-                name="busNumber"
-                value={busNumber}
-                onChange={(e) => setBusNumber(e.target.value)} // Handle change
-                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              />
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="busNumber"
+                  >
+                    Bus Number
+                  </label>
+                  <input
+                    type="text"
+                    id="busNumber"
+                    name="busNumber"
+                    value={busNumber}
+                    onChange={(e) => setBusNumber(e.target.value)}
+                    className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="capacity"
+                  >
+                    Capacity
+                  </label>
+                  <input
+                    type="number"
+                    id="capacity"
+                    name="capacity"
+                    value={capacity}
+                    onChange={(e) => setCapacity(e.target.value)}
+                    className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="status"
+                  >
+                    Status
+                  </label>
+                  <input
+                    type="text"
+                    id="status"
+                    name="status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+              </div>
             </div>
 
             <div>
@@ -271,7 +313,7 @@ const CreateBus: React.FC = () => {
                 </div>
               </div>
 
-                <h2 className="block text-gray-700 text-sm font-bold">
+              <h2 className="block text-gray-700 text-sm font-bold">
                 Bus Passenger Channel
               </h2>
               <div className="flex gap-4 mb-4 mt-4">
@@ -309,40 +351,6 @@ const CreateBus: React.FC = () => {
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="capacity"
-              >
-                Capacity
-              </label>
-              <input
-                type="number"
-                id="capacity"
-                name="capacity"
-                value={capacity}
-                onChange={(e) => setCapacity(e.target.value)} // Handle change
-                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="status"
-              >
-                Status
-              </label>
-              <input
-                type="text"
-                id="status"
-                name="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)} // Handle change
-                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              />
             </div>
 
             <div className="mb-4">

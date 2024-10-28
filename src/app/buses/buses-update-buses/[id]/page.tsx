@@ -26,13 +26,31 @@ const BusForm: React.FC = () => {
     lastName: string;
   }
 
+  interface BusLocationChannel{
+    channelId: string;
+    latFieldNumber: string;
+    longFieldNumber: string;
+  }
+
+  interface BusPassengerChannel{
+    channelId: string;
+    fieldNumber: string;
+  }
+
   // State for loading, error, and form fields
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const [busName, setBusName] = useState<string>('');
   const [busNumber, setBusNumber] = useState<string>('');
-  const [busChannel, setBusChannel] = useState<string>('');
+
+  const [busLocationChannel, setBusLocationChannel] = useState('');
+  const [latFieldNumber, setLatFieldNumber] = useState('');
+  const [longFieldNumber, setLongFieldNumber] = useState('');
+
+  const [busPassengerChannel, setBusPassengerChannel] = useState('');
+  const [fieldNumber, setFieldNumber] = useState('');
+
   const [capacity, setCapacity] = useState<number | ''>('');
   const [status, setStatus] = useState<string>('');
   const [routeId, setRouteId] = useState<string>('');
@@ -82,6 +100,42 @@ const BusForm: React.FC = () => {
       }
     };
 
+    const fetchBusLocChannel = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/buses/get-loc-channel/${id}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: BusLocationChannel = await response.json();
+        setBusLocationChannel(result.channelId)
+        setLatFieldNumber(result.latFieldNumber)
+        setLongFieldNumber(result.longFieldNumber)
+
+        
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchBusPassChannel = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/buses/get-pass-channel/${id}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: BusPassengerChannel = await response.json();
+        
+        setBusPassengerChannel(result.channelId)
+        setFieldNumber(result.fieldNumber)
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const fetchDrivers = async () => {
       try {
         const response = await fetch('http://localhost:4000/drivers/index');
@@ -95,6 +149,8 @@ const BusForm: React.FC = () => {
       }
     };
 
+    fetchBusLocChannel();
+    fetchBusPassChannel();
     fetchDrivers();
     fetchBus();
   }, [id]);
@@ -134,9 +190,13 @@ const BusForm: React.FC = () => {
           id,
           busName,
           busNumber,
-          busChannel,
           capacity,
           status,
+          busLocationChannel,
+          latFieldNumber,
+          longFieldNumber,
+          busPassengerChannel,
+          fieldNumber,
           driverId: selectedDriver ? selectedDriver.id : null, // Send the selected driver ID
           routeId,
 
@@ -167,60 +227,174 @@ const BusForm: React.FC = () => {
     <div className="flex flex-col justify-start container mx-auto mt-16 p-4 gap-4 h-[calc(100vh-4rem)]">
       <Toaster position="top-center" />
       <form onSubmit={handleSubmit}>
-        <div className="flex gap-4 w-full">
-          <div className="flex flex-col">
-            <label htmlFor="busName">Bus Name</label>
-            <input
-              id="busName"
-              placeholder="e.g. Bus 1"
-              value={busName}
-              onChange={(e) => setBusName(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
+        <div className="flex gap-4 mb-4 mt-4">
+          <div className="flex-1">
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="busName"
+              >
+                Bus Name
+              </label>
+              <input
+                type="text"
+                id="busName"
+                name="busName"
+                value={busName}
+                onChange={(e) => setBusName(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="busNumber"
+              >
+                Bus Number
+              </label>
+              <input
+                type="text"
+                id="busNumber"
+                name="busNumber"
+                value={busNumber}
+                onChange={(e) => setBusNumber(e.target.value)}
+                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+              />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="busNumber">Bus Number</label>
-            <input
-              id="busNumber"
-              placeholder="e.g. 1234"
-              value={busNumber}
-              onChange={(e) => setBusNumber(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="busChannel">Bus Channel</label>
-            <input
-              id="busChannel"
-              placeholder="e.g. 2629457"
-              value={busChannel}
-              onChange={(e) => setBusChannel(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
+
+          <div className="flex-1">
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="capacity"
+              >
+                Capacity
+              </label>
+              <input
+                type="number"
+                id="capacity"
+                name="capacity"
+                value={capacity}
+                onChange={(e) => setCapacity(Number(e.target.value))}
+                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="status"
+              >
+                Status
+              </label>
+              <input
+                type="text"
+                id="status"
+                name="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="flex gap-4 w-full">
-          <div className="flex flex-col">
-            <label htmlFor="capacity">Capacity</label>
-            <input
-              id="capacity"
-              type="number"
-              placeholder="e.g. 50"
-              value={capacity}
-              onChange={(e) => setCapacity(Number(e.target.value))}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
+        <div>
+          <h2 className="block text-gray-700 text-sm font-bold">
+            Bus Location Channel
+          </h2>
+          <div className="flex gap-4 mb-4 mt-2">
+            <div className="flex-1">
+              <label
+                className="block text-gray-700 text-xs font-normal mb-2"
+                htmlFor="busChannel"
+              >
+                Channel ID
+              </label>
+              <input
+                type="text"
+                id="busChannel"
+                name="busChannel"
+                value={busLocationChannel}
+                onChange={(e) => setBusLocationChannel(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label
+                className="block text-gray-700 text-xs font-normal mb-2"
+                htmlFor="latFieldNumber"
+              >
+                Bus Latitude Number
+              </label>
+              <input
+                type="text"
+                id="latFieldNumber"
+                name="latFieldNumber"
+                value={latFieldNumber}
+                onChange={(e) => setLatFieldNumber(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label
+                className="block text-gray-700 text-xs font-normal mb-2"
+                htmlFor="longFieldNumber"
+              >
+                Bus Longitude Number
+              </label>
+              <input
+                type="text"
+                id="longFieldNumber"
+                name="longFieldNumber"
+                value={longFieldNumber}
+                onChange={(e) => setLongFieldNumber(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="status">Status</label>
-            <input
-              id="status"
-              placeholder="e.g. Active"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
+
+          <h2 className="block text-gray-700 text-sm font-bold">
+            Bus Passenger Channel
+          </h2>
+          <div className="flex gap-4 mb-4 mt-4">
+            <div className="flex-1">
+              <label
+                className="block text-gray-700 text-xs font-normal mb-2"
+                htmlFor="passengerChannel"
+              >
+                Channel ID
+              </label>
+              <input
+                type="text"
+                id="passengerChannel"
+                name="passengerChannel"
+                value={busPassengerChannel}
+                onChange={(e) => setBusPassengerChannel(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label
+                className="block text-gray-700 text-xs font-normal mb-2"
+                htmlFor="fieldNumber"
+              >
+                Field Number
+              </label>
+              <input
+                type="text"
+                id="fieldNumber"
+                name="fieldNumber"
+                value={fieldNumber}
+                onChange={(e) => setFieldNumber(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
           </div>
         </div>
 
