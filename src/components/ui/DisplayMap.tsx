@@ -107,6 +107,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     });
 
     setBuses(combinedBuses);
+    console.log(combinedBuses)
     setLoading(false);
   };
 
@@ -194,27 +195,26 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   // UseEffect for Buses
   useEffect(() => {
     if (!mapRef.current || buses.length === 0) return;
-
+  
     // Remove existing bus markers
     Object.values(busMarkersRef.current).forEach(marker => {
       marker.remove();
     });
     busMarkersRef.current = {};
-
+  
     // Filter buses based on the selected route and only include those with valid coordinates
     const filteredBuses = selectedRoute === 'all'
-      ? buses.filter(bus => bus.latitude !== null && bus.longitude !== null) // Show all buses with valid coordinates if "all" is selected
+      ? buses.filter(bus => bus.latitude && bus.longitude) // Ensure latitude and longitude fields exist and are non-null
       : buses.filter(bus =>
         bus.route.routeName === selectedRoute &&
-        bus.latitude !== null &&
-        bus.longitude !== null
-      ); // Only show buses matching the selected route with valid coordinates
-
+        bus.latitude && bus.longitude // Ensure latitude and longitude fields exist and are non-null
+      );
+  
     // Add buses as circle markers
     filteredBuses.forEach(bus => {
-      const latitude = parseFloat(bus.latitude!); // Ensure latitude is a number
-      const longitude = parseFloat(bus.longitude!); // Ensure longitude is a number
-
+      const latitude = parseFloat(bus.latitude); // Ensure latitude is a number
+      const longitude = parseFloat(bus.longitude); // Ensure longitude is a number
+  
       const marker = L.circleMarker([latitude, longitude], {
         radius: 9,
         color: bus.route.routeColor,
@@ -223,16 +223,17 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
       })
         .addTo(mapRef.current!)
         .bindPopup(`
-        <b>Bus Name:</b> ${bus.busName} <br>
-        <b>Bus Number:</b> ${bus.busNumber} <br>
-        <b>Capacity:</b> ${bus.capacity} <br>
-        <b>Passengers:</b> ${bus.passCount} <br>
-        <b>Available Seats:</b> ${bus.capacity - parseInt(bus.passCount, 10)} <br>
-      `);
-
+          <b>Bus Name:</b> ${bus.busName} <br>
+          <b>Bus Number:</b> ${bus.busNumber} <br>
+          <b>Capacity:</b> ${bus.capacity} <br>
+          <b>Passengers:</b> ${bus.passCount} <br>
+          <b>Available Seats:</b> ${bus.capacity - parseInt(bus.passCount, 10)} <br>
+        `);
+  
       busMarkersRef.current[bus.id] = marker;
     });
   }, [buses, selectedRoute]);
+  
 
 
   return (
