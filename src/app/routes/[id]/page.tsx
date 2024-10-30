@@ -188,10 +188,12 @@ interface ChannelData {
           <div>Passengers</div>
           <div>{latestPassengers}</div>
         </div>
-        <div className="flex-grow flex-col h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all">
-          <div>Stops</div>
-          <div>TBA</div>
-        </div>
+        <Link
+          href={`${id}/sections?routeName=${encodeURIComponent(routeName)}`}
+          className="flex-grow flex-col h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all"
+        >
+          <div>Sections</div>
+        </Link>
       </div>
   
       <div className="w-full mt-5 h-fit flex gap-3 flex-col">
