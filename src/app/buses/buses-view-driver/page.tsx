@@ -5,25 +5,44 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 
+// Interface for Route
+interface Route {
+  id: string;          // Unique identifier for the route
+  routeName: string;  // Name of the route
+  routeColor: string; // Color associated with the route
+}
+
+// Interface for Bus
+interface Bus {
+  id: string;           // Unique identifier for the bus
+  routeId: string;     // Identifier for the associated route
+  busName: string;     // Name of the bus
+  busNumber: string;   // Bus number
+  capacity: number;    // Maximum capacity of the bus
+  status: string;      // Current status of the bus (e.g., onroad, maintenance)
+  route: Route;        // The route object associated with the bus
+}
+
+// Interface for Driver
 interface Driver {
-  id: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  phone: string;
-  status: string;
-  bus: {
-    id: string;
-    busName: string;
-    busNumber: string;
-    capacity: string;
-    status: string;
-  };
+  id: string;          // Unique identifier for the driver
+  userId: string;     // ID of the associated user
+  busId: string;      // ID of the bus associated with the driver
+  bus: Bus;           // The bus object associated with the driver
+}
+
+// Interface for User
+interface User {
+  id: string;         // Unique identifier for the user
+  name: string;      // Name of the user
+  email: string;     // Email address of the user
+  role: string;      // Role of the user (e.g., driver, admin)
+  driver: Driver;    // The driver object associated with the user
 }
 
 const BusesAssignDriver: React.FC = () => {
   const router = useRouter();
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [users, setUsers] = useState<User[]>([]); // State to hold the users with drivers
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,22 +56,23 @@ const BusesAssignDriver: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await fetch('http://localhost:4000/drivers/index'); // Adjust the endpoint as needed
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const driversResult: Driver[] = await response.json();
-        setDrivers(driversResult);
+        const usersResult: User[] = await response.json(); // Fetch users with driver information
+        setUsers(usersResult); // Set the users in state
       } catch (error) {
-        setError((error as Error).message);
+        setError((error as Error).message); // Set the error message
       } finally {
-        setLoading(false);
+        setLoading(false); // End loading
       }
     };
 
     fetchData();
-  }, []);
+  }, []); 
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -84,56 +104,52 @@ const BusesAssignDriver: React.FC = () => {
           >
             <thead>
               <tr>
-                <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
-                  #
-                </th>
-                <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
-                  Assigned Route
-                </th>
-                <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
-                  Bus Number
-                </th>
-                <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
-                  Actions
-                </th>
+                {['#', 'Name', 'Email', 'Assigned Bus', 'Bus Number', 'Status', 'Actions'].map((header, index) => (
+                  <th key={index} className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white">
-              {drivers.map((driver, index) => (
-                <tr key={driver.id}>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {index + 1}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
-                  </td>
-
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.bus ? driver.bus.busName : 'N/A'}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.bus ? driver.bus.busNumber : 'N/A'}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {driver.bus ? driver.bus.status : 'N/A'}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    <Link
-                    
-                      href={`buses-update-driver/${driver.id}`}
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Edit
-                    </Link>
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-5 text-gray-500">
+                    No users available.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                users.map((user, index) => (
+                  <tr key={user.id}>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {index + 1}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.name}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.email}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.driver ? user.driver.bus.busName : 'N/A'}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.driver ? user.driver.bus.busNumber : 'N/A'}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.driver ? user.driver.bus.status : 'N/A'}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      <Link
+                        href={`buses-update-driver/${user.id}`}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      >
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
