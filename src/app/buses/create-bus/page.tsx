@@ -41,6 +41,12 @@ const CreateBus: React.FC = () => {
   const [capacity, setCapacity] = useState('');
   const [status, setStatus] = useState('');
 
+  const [busLocationChannel, setBusChannel] = useState('');
+  const [latFieldNumber, setLatFieldNumber] = useState('');
+  const [longFieldNumber, setLongFieldNumber] = useState('');
+  const [busPassengerChannel, setBusPassengerChannel] = useState('');
+  const [fieldNumber, setFieldNumber] = useState('');
+
   const router = useRouter();
 
   const handleBackClick = () => {
@@ -105,6 +111,7 @@ const CreateBus: React.FC = () => {
         setError((error as Error).message);
       }
     };
+    
 
     fetchRoutes();
     fetchDrivers();
@@ -139,6 +146,11 @@ const CreateBus: React.FC = () => {
     const busData = {
       busName,
       busNumber,
+      busLocationChannel,
+      latFieldNumber,
+      longFieldNumber,
+      busPassengerChannel,
+      fieldNumber,
       capacity,
       status,
       driverId: selectedDriver ? selectedDriver.id : null,
@@ -161,6 +173,9 @@ const CreateBus: React.FC = () => {
       // Optionally, you can reset the form and selected route here
       setBusName('');
       setBusNumber('');
+      setBusChannel('');
+      setLatFieldNumber('');
+      setLongFieldNumber('');
       setCapacity('');
       setStatus('');
       setSelectedRoute(null);
@@ -181,72 +196,175 @@ const CreateBus: React.FC = () => {
             Create Bus
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="mb-4 mt-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="busName"
-              >
-                Bus Name
-              </label>
-              <input
-                type="text"
-                id="busName"
-                name="busName"
-                value={busName}
-                onChange={(e) => setBusName(e.target.value)} // Handle change
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
+            <div className="flex gap-4 mb-4 mt-4">
+              <div className="flex-1">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="busName"
+                  >
+                    Bus Name
+                  </label>
+                  <input
+                    type="text"
+                    id="busName"
+                    name="busName"
+                    value={busName}
+                    onChange={(e) => setBusName(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="busNumber"
+                  >
+                    Bus Number
+                  </label>
+                  <input
+                    type="text"
+                    id="busNumber"
+                    name="busNumber"
+                    value={busNumber}
+                    onChange={(e) => setBusNumber(e.target.value)}
+                    className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="capacity"
+                  >
+                    Capacity
+                  </label>
+                  <input
+                    type="number"
+                    id="capacity"
+                    name="capacity"
+                    value={capacity}
+                    onChange={(e) => setCapacity(e.target.value)}
+                    className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="status"
+                  >
+                    Status
+                  </label>
+                  <input
+                    type="text"
+                    id="status"
+                    name="status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="busNumber"
-              >
-                Bus Number
-              </label>
-              <input
-                type="text"
-                id="busNumber"
-                name="busNumber"
-                value={busNumber}
-                onChange={(e) => setBusNumber(e.target.value)} // Handle change
-                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              />
-            </div>
+            <div>
+              <h2 className="block text-gray-700 text-sm font-bold">
+                Bus Location Channel
+              </h2>
+              <div className="flex gap-4 mb-4 mt-2">
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="busChannel"
+                  >
+                    Channel ID
+                  </label>
+                  <input
+                    type="text"
+                    id="busChannel"
+                    name="busChannel"
+                    value={busLocationChannel}
+                    onChange={(e) => setBusChannel(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
 
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="capacity"
-              >
-                Capacity
-              </label>
-              <input
-                type="number"
-                id="capacity"
-                name="capacity"
-                value={capacity}
-                onChange={(e) => setCapacity(e.target.value)} // Handle change
-                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              />
-            </div>
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="latFieldNumber"
+                  >
+                    Bus Latitude Number
+                  </label>
+                  <input
+                    type="text"
+                    id="latFieldNumber"
+                    name="latFieldNumber"
+                    value={latFieldNumber}
+                    onChange={(e) => setLatFieldNumber(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
 
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="status"
-              >
-                Status
-              </label>
-              <input
-                type="text"
-                id="status"
-                name="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)} // Handle change
-                className="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              />
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="longFieldNumber"
+                  >
+                    Bus Longitude Number
+                  </label>
+                  <input
+                    type="text"
+                    id="longFieldNumber"
+                    name="longFieldNumber"
+                    value={longFieldNumber}
+                    onChange={(e) => setLongFieldNumber(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </div>
+
+              <h2 className="block text-gray-700 text-sm font-bold">
+                Bus Passenger Channel
+              </h2>
+              <div className="flex gap-4 mb-4 mt-4">
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="passengerChannel"
+                  >
+                    Channel ID
+                  </label>
+                  <input
+                    type="text"
+                    id="passengerChannel"
+                    name="passengerChannel"
+                    value={busPassengerChannel}
+                    onChange={(e) => setBusPassengerChannel(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label
+                    className="block text-gray-700 text-xs font-normal mb-2"
+                    htmlFor="fieldNumber"
+                  >
+                    Field Number
+                  </label>
+                  <input
+                    type="text"
+                    id="fieldNumber"
+                    name="fieldNumber"
+                    value={fieldNumber}
+                    onChange={(e) => setFieldNumber(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="mb-4">
@@ -264,7 +382,7 @@ const CreateBus: React.FC = () => {
 
                 {/* Route Dropdown Menu */}
                 {isRouteOpen && (
-                  <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1">
                       {loading && (
                         <div className="px-4 py-2 text-sm text-gray-700">
@@ -332,7 +450,7 @@ const CreateBus: React.FC = () => {
                           <div
                             key={driver.id}
                             onClick={() => handleDriverSelect(driver)}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer z-50"
                           >
                             {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
                           </div>

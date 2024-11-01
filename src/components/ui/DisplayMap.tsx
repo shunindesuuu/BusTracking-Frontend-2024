@@ -58,62 +58,63 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
       }
     };
 
-    
+
     fetchRoutes();
   }, []);
 
-  
-  
-const fetchBuses = async () => {
-  try {
+
+
+  const fetchBuses = async () => {
+    try {
       const response = await fetch('http://localhost:4000/thingspeak/bus-location');
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok');
       }
       const busLocationData: Buses[] = await response.json();
       return busLocationData; // Return the fetched data
-  } catch (error) {
+    } catch (error) {
       setError((error as Error).message);
       return []; // Return an empty array on error
-  }
-};
+    }
+  };
 
-const fetchBusPassCount = async () => {
-  try {
+  const fetchBusPassCount = async () => {
+    try {
       const response = await fetch('http://localhost:4000/thingspeak/all-bus-passengers');
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok');
       }
       const busPassCountData: Buses[] = await response.json();
       return busPassCountData; // Return the fetched data
-  } catch (error) {
+    } catch (error) {
       setError((error as Error).message);
       return []; // Return an empty array on error
-  }
-};
+    }
+  };
 
-const fetchData = async () => {
-  setLoading(true);
-  const busesData = await fetchBuses();
-  const passCountData = await fetchBusPassCount();
+  const fetchData = async () => {
+    setLoading(true);
+    const busesData = await fetchBuses();
+    const passCountData = await fetchBusPassCount();
 
-  // Combine the results based on the bus ID
-  const combinedBuses = busesData.map(bus => {
+    // Combine the results based on the bus ID
+    const combinedBuses = busesData.map(bus => {
       const passCountEntry = passCountData.find(p => p.id === bus.id);
       return {
-          ...bus,
-          passCount: passCountEntry ? passCountEntry.passCount : '0', // Set to '0' if no count found
+        ...bus,
+        passCount: passCountEntry ? passCountEntry.passCount : '0', // Set to '0' if no count found
       };
-  });
+    });
 
-  setBuses(combinedBuses);
-  setLoading(false);
-};
+    setBuses(combinedBuses);
+    console.log(combinedBuses)
+    setLoading(false);
+  };
 
   // Fetch data every 15 seconds
   useEffect(() => {
     fetchData(); // Fetch buses initially
-    const intervalId = setInterval(fetchData, 15000); // 15 seconds interval
+    const intervalId = setInterval(fetchData, 30000); // 15 seconds interval
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
@@ -191,48 +192,48 @@ const fetchData = async () => {
     });
   }, [routes, selectedRoute]);
 
-// UseEffect for Buses
-useEffect(() => {
-  if (!mapRef.current || buses.length === 0) return;
-
-  // Remove existing bus markers
-  Object.values(busMarkersRef.current).forEach(marker => {
-    marker.remove();
-  });
-  busMarkersRef.current = {};
-
-  // Filter buses based on the selected route and only include those with valid coordinates
-  const filteredBuses = selectedRoute === 'all'
-    ? buses.filter(bus => bus.latitude !== null && bus.longitude !== null) // Show all buses with valid coordinates if "all" is selected
-    : buses.filter(bus => 
-        bus.route.routeName === selectedRoute && 
-        bus.latitude !== null && 
-        bus.longitude !== null
-      ); // Only show buses matching the selected route with valid coordinates
-
-  // Add buses as circle markers
-  filteredBuses.forEach(bus => {
-    const latitude = parseFloat(bus.latitude!); // Ensure latitude is a number
-    const longitude = parseFloat(bus.longitude!); // Ensure longitude is a number
-
-    const marker = L.circleMarker([latitude, longitude], {
-      radius: 9,
-      color: bus.route.routeColor,
-      fillColor: bus.route.routeColor,
-      fillOpacity: 0.5,
-    })
-      .addTo(mapRef.current!)
-      .bindPopup(`
-        <b>Bus Name:</b> ${bus.busName} <br>
-        <b>Bus Number:</b> ${bus.busNumber} <br>
-        <b>Capacity:</b> ${bus.capacity} <br>
-        <b>Passengers:</b> ${bus.passCount} <br>
-        <b>Available Seats:</b> ${bus.capacity - parseInt(bus.passCount, 10)} <br>
-      `);
-
-    busMarkersRef.current[bus.id] = marker;
-  });
-}, [buses, selectedRoute]);
+  // UseEffect for Buses
+  useEffect(() => {
+    if (!mapRef.current || buses.length === 0) return;
+  
+    // Remove existing bus markers
+    Object.values(busMarkersRef.current).forEach(marker => {
+      marker.remove();
+    });
+    busMarkersRef.current = {};
+  
+    // Filter buses based on the selected route and only include those with valid coordinates
+    const filteredBuses = selectedRoute === 'all'
+      ? buses.filter(bus => bus.latitude && bus.longitude) // Ensure latitude and longitude fields exist and are non-null
+      : buses.filter(bus =>
+        bus.route.routeName === selectedRoute &&
+        bus.latitude && bus.longitude // Ensure latitude and longitude fields exist and are non-null
+      );
+  
+    // Add buses as circle markers
+    filteredBuses.forEach(bus => {
+      const latitude = parseFloat(bus.latitude); // Ensure latitude is a number
+      const longitude = parseFloat(bus.longitude); // Ensure longitude is a number
+  
+      const marker = L.circleMarker([latitude, longitude], {
+        radius: 9,
+        color: bus.route.routeColor,
+        fillColor: bus.route.routeColor,
+        fillOpacity: 0.5,
+      })
+        .addTo(mapRef.current!)
+        .bindPopup(`
+          <b>Bus Name:</b> ${bus.busName} <br>
+          <b>Bus Number:</b> ${bus.busNumber} <br>
+          <b>Capacity:</b> ${bus.capacity} <br>
+          <b>Passengers:</b> ${bus.passCount} <br>
+          <b>Available Seats:</b> ${bus.capacity - parseInt(bus.passCount, 10)} <br>
+        `);
+  
+      busMarkersRef.current[bus.id] = marker;
+    });
+  }, [buses, selectedRoute]);
+  
 
 
   return (
