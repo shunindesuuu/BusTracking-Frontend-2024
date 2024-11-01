@@ -1,43 +1,43 @@
 'use client';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-
+import { useSession } from 'next-auth/react';
 
 // Interface for Route
 interface Route {
-  id: string;          // Unique identifier for the route
-  routeName: string;  // Name of the route
+  id: string; // Unique identifier for the route
+  routeName: string; // Name of the route
   routeColor: string; // Color associated with the route
 }
 
 // Interface for Bus
 interface Bus {
-  id: string;           // Unique identifier for the bus
-  routeId: string;     // Identifier for the associated route
-  busName: string;     // Name of the bus
-  busNumber: string;   // Bus number
-  capacity: number;    // Maximum capacity of the bus
-  status: string;      // Current status of the bus (e.g., onroad, maintenance)
-  route: Route;        // The route object associated with the bus
+  id: string; // Unique identifier for the bus
+  routeId: string; // Identifier for the associated route
+  busName: string; // Name of the bus
+  busNumber: string; // Bus number
+  capacity: number; // Maximum capacity of the bus
+  status: string; // Current status of the bus (e.g., onroad, maintenance)
+  route: Route; // The route object associated with the bus
 }
 
 // Interface for Driver
 interface Driver {
-  id: string;          // Unique identifier for the driver
-  userId: string;     // ID of the associated user
-  busId: string;      // ID of the bus associated with the driver
-  bus: Bus;           // The bus object associated with the driver
+  id: string; // Unique identifier for the driver
+  userId: string; // ID of the associated user
+  busId: string; // ID of the bus associated with the driver
+  bus: Bus; // The bus object associated with the driver
 }
 
 // Interface for User
 interface User {
-  id: string;         // Unique identifier for the user
-  name: string;      // Name of the user
-  email: string;     // Email address of the user
-  role: string;      // Role of the user (e.g., driver, admin)
-  driver: Driver;    // The driver object associated with the user
+  id: string; // Unique identifier for the user
+  name: string; // Name of the user
+  email: string; // Email address of the user
+  role: string; // Role of the user (e.g., driver, admin)
+  driver: Driver; // The driver object associated with the user
 }
 
 const BusesAssignDriver: React.FC = () => {
@@ -53,6 +53,18 @@ const BusesAssignDriver: React.FC = () => {
   const handleCreateClick = () => {
     router.push('/buses/buses-create-driver'); // Redirects to the create driver page
   };
+
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +84,7 @@ const BusesAssignDriver: React.FC = () => {
     };
 
     fetchData();
-  }, []); 
+  }, []);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -104,8 +116,19 @@ const BusesAssignDriver: React.FC = () => {
           >
             <thead>
               <tr>
-                {['#', 'Name', 'Email', 'Assigned Bus', 'Bus Number', 'Status', 'Actions'].map((header, index) => (
-                  <th key={index} className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
+                {[
+                  '#',
+                  'Name',
+                  'Email',
+                  'Assigned Bus',
+                  'Bus Number',
+                  'Status',
+                  'Actions',
+                ].map((header, index) => (
+                  <th
+                    key={index}
+                    className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider"
+                  >
                     {header}
                   </th>
                 ))}

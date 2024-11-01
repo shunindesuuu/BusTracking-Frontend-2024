@@ -25,6 +25,12 @@ const menu = [
         link: "/users",
 
     },
+    {
+        id: 5,
+        title: "Statistics",
+        link: "/statistics",
+
+    },
 
 ];
 
