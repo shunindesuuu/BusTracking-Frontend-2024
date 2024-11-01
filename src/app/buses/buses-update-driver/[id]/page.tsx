@@ -9,31 +9,38 @@ const DriverForm: React.FC = () => {
   const params = useParams();
   const { id } = params;
 
-  // Driver Interface
   interface Bus {
-    id: string;
-    busName: string;
-  }
+    id: string;           // Unique identifier for the bus
+    routeId: string;     // Identifier for the route
+    busName: string;     // Name of the bus
+    busNumber: string;   // Bus number
+    capacity: number;    // Maximum capacity of the bus
+    status: string;      // Current status of the bus (e.g., onroad, maintenance)
+}
 
-  interface Driver {
-    id: string;
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-    phone: string;
-    status: string;
-    bus: Bus | null; // Driver can have no bus assigned
-  }
+// Interface for the Driver
+interface Driver {
+    id: string;          // Unique identifier for the driver
+    userId: string;     // ID of the associated user
+    busId: string;      // ID of the bus associated with the driver
+    bus: Bus;           // The bus object associated with the driver
+}
+
+// Interface for the User
+interface User {
+    id: string;         // Unique identifier for the user
+    name: string;      // Name of the user
+    email: string;     // Email address of the user
+    role: string;      // Role of the user (e.g., driver, admin)
+    driver: Driver;    // The driver object associated with the user
+}
 
   // State for loading, error, and form fields
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [firstName, setFirstName] = useState<string>('');
-  const [middleName, setMiddleName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [status, setStatus] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [busId, setBusId] = useState<string | null>(null);
 
   const [buses, setBuses] = useState<Bus[]>([]);
@@ -64,29 +71,21 @@ const DriverForm: React.FC = () => {
   // Fetch the driver data when the component loads
   useEffect(() => {
     const fetchDriver = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`http://localhost:4000/drivers/${id}`);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Failed to fetch driver data');
         }
-        const result: Driver = await response.json();
-        setFirstName(result.firstName);
-        setMiddleName(result.middleName || '');
-        setLastName(result.lastName);
-        setPhone(result.phone);
-        setStatus(result.status);
-        setBusId(result.bus?.id || null);
-        console.log(result);
+        
+        const result: User = await response.json(); // Expecting a User object
+        setName(result.name);
+        setEmail(result.email);
+        setBusId(result.driver.bus.id || null);
 
-        if (result.bus) {
-          const busResponse = await fetch(
-            `http://localhost:4000/buses/${result.bus.id}`
-          );
-          if (busResponse.ok) {
-            const busData: Bus = await busResponse.json();
-
-            setSelectedBus(busData); // Set the selected bus based on the fetched data
-          }
+        // Directly set the bus if available
+        if (result.driver.bus) {
+          setSelectedBus(result.driver.bus);
         }
       } catch (error) {
         setError((error as Error).message);
@@ -99,9 +98,10 @@ const DriverForm: React.FC = () => {
       try {
         const response = await fetch('http://localhost:4000/buses/index');
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Failed to fetch buses');
         }
-        const result: Bus[] = await response.json();
+        
+        const result: Bus[] = await response.json(); // Expecting an array of Bus objects
         setBuses(result);
       } catch (error) {
         setError((error as Error).message);
@@ -117,20 +117,12 @@ const DriverForm: React.FC = () => {
     e.preventDefault();
 
     // Form validation
-    if (!firstName.trim()) {
+    if (!name.trim()) {
       toast.error('Please enter a first name');
       return;
     }
-    if (!lastName.trim()) {
+    if (!email.trim()) {
       toast.error('Please enter a last name');
-      return;
-    }
-    if (!phone.trim()) {
-      toast.error('Please enter a phone number');
-      return;
-    }
-    if (!status.trim()) {
-      toast.error('Please enter a status');
       return;
     }
 
@@ -142,11 +134,6 @@ const DriverForm: React.FC = () => {
         },
         body: JSON.stringify({
           id,
-          firstName,
-          middleName,
-          lastName,
-          phone,
-          status,
           busId: selectedBus ? selectedBus.id : null, // Send the selected bus ID
         }),
       });
@@ -173,59 +160,18 @@ const DriverForm: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <div className="flex gap-4 w-full">
           <div className="flex flex-col">
-            <label htmlFor="firstName">First Name</label>
+            <label htmlFor="firstName">Name</label>
             <input
               id="firstName"
               placeholder="e.g. John"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="h-fit w-fit p-2 border-2 rounded-md"
             />
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="middleName">Middle Name</label>
-            <input
-              id="middleName"
-              placeholder="e.g. Doe"
-              value={middleName}
-              onChange={(e) => setMiddleName(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              id="lastName"
-              placeholder="e.g. Smith"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
-          </div>
+      
         </div>
 
-        <div className="flex gap-4 w-full">
-          <div className="flex flex-col">
-            <label htmlFor="phone">Phone</label>
-            <input
-              id="phone"
-              placeholder="e.g. 09123456789"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="status">Status</label>
-            <input
-              id="status"
-              placeholder="e.g. Active"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
-          </div>
-        </div>
 
         {/* Bus Selection */}
         <div className="flex flex-col mb-4">

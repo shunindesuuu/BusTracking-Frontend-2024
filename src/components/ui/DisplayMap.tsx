@@ -114,7 +114,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   // Fetch data every 15 seconds
   useEffect(() => {
     fetchData(); // Fetch buses initially
-    const intervalId = setInterval(fetchData, 30000); // 15 seconds interval
+    const intervalId = setInterval(fetchData, 15000); // 15 seconds interval
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
