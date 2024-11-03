@@ -42,50 +42,47 @@ interface User {
 
 const BusesAssignDriver: React.FC = () => {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>([]); // State to hold the users with drivers
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { data: session, status } = useSession();
 
   const handleBackClick = () => {
     router.push('/buses');
   };
 
   const handleCreateClick = () => {
-    router.push('/buses/buses-create-driver'); // Redirects to the create driver page
+    router.push('/buses/buses-create-driver');
   };
 
-  const { data: session, status } = useSession();
-
-  if (status === 'loading') {
-    return null;
-  }
-  if (!session) {
-    redirect('/login');
-  }
-  if (session.user?.role !== 'admin') {
-    redirect('/');
-  }
+  useEffect(() => {
+    // Redirect if not admin
+    if (status === 'authenticated' && session.user?.role !== 'admin') {
+      router.push('/');
+    }
+  }, [status, session, router]);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
-        const response = await fetch('http://localhost:4000/drivers/index'); // Adjust the endpoint as needed
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const usersResult: User[] = await response.json(); // Fetch users with driver information
-        setUsers(usersResult); // Set the users in state
+        const response = await fetch('http://localhost:4000/drivers/index');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const usersResult: User[] = await response.json();
+        setUsers(usersResult);
       } catch (error) {
-        setError((error as Error).message); // Set the error message
+        setError((error as Error).message);
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    if (status === 'authenticated' && session.user?.role === 'admin') {
+      fetchData();
+    }
+  }, [status, session]);
 
+  if (status === 'loading') return null; // Wait for session status
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -116,15 +113,7 @@ const BusesAssignDriver: React.FC = () => {
           >
             <thead>
               <tr>
-                {[
-                  '#',
-                  'Name',
-                  'Email',
-                  'Assigned Bus',
-                  'Bus Number',
-                  'Status',
-                  'Actions',
-                ].map((header, index) => (
+                {['#', 'Name', 'Email', 'Assigned Bus', 'Bus Number', 'Status', 'Actions'].map((header, index) => (
                   <th
                     key={index}
                     className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider"
@@ -144,15 +133,9 @@ const BusesAssignDriver: React.FC = () => {
               ) : (
                 users.map((user, index) => (
                   <tr key={user.id}>
-                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {index + 1}
-                    </td>
-                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.name}
-                    </td>
-                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.email}
-                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">{index + 1}</td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">{user.name}</td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">{user.email}</td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                       {user.driver ? user.driver.bus.busName : 'N/A'}
                     </td>
@@ -163,10 +146,7 @@ const BusesAssignDriver: React.FC = () => {
                       {user.driver ? user.driver.bus.status : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      <Link
-                        href={`buses-update-driver/${user.id}`}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      >
+                      <Link href={`buses-update-driver/${user.id}`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Edit
                       </Link>
                     </td>

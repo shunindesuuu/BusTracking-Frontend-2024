@@ -6,14 +6,19 @@ import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 interface Driver {
-  firstName: any;
-  middleName: any;
-  lastName: any;
-  id: string;
-  name: string;
-  phone: string;
-  status: string;
-  busId: string;
+  id: string; // Unique identifier for the driver
+  userId: string; // ID of the associated user
+  busId: string; // ID of the bus associated with the driver
+  bus: Bus; // The bus object associated with the driver
+}
+
+// Interface for User
+interface User {
+  id: string; // Unique identifier for the user
+  name: string; // Name of the user
+  email: string; // Email address of the user
+  role: string; // Role of the user (e.g., driver, admin)
+  driver: Driver; // The driver object associated with the user
 }
 
 interface Bus {
@@ -25,21 +30,21 @@ interface Bus {
   _count: {
     passengers: number; // Add the passenger count from Prisma
   };
-  driver: Driver | null; // Adjusted to handle cases where a driver may not be assigned
+  driver: User | null; // Adjusted to handle cases where a driver may not be assigned
 }
 
 const BusesViewBuses: React.FC = () => {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
-  if (status === 'loading') {
-    return null;
-  }
-  if (!session) {
-    redirect('/login');
-  }
-  if (session.user?.role !== 'admin') {
-    redirect('/');
-  }
+  // if (status === 'loading') {
+  //   return null;
+  // }
+  // if (!session) {
+  //   redirect('/login');
+  // }
+  // if (session.user?.role !== 'admin') {
+  //   redirect('/');
+  // }
 
   const router = useRouter();
   const [buses, setBuses] = useState<Bus[]>([]);
@@ -62,18 +67,18 @@ const BusesViewBuses: React.FC = () => {
       }
 
       const busesResult: Bus[] = await busesResponse.json();
-      const driversResult: Driver[] = await driversResponse.json();
+      const driversResult: User[] = await driversResponse.json();
+      console.log(driversResult )
+
 
       // Map drivers to buses
       const busesWithDrivers = busesResult.map((bus) => {
         const assignedDriver =
-          driversResult.find((driver) => driver.busId === bus.id) || null;
+          driversResult.find((driver) => driver.driver?.busId === bus.id) || null;
         return { ...bus, driver: assignedDriver };
       });
 
-      console.log()
-
-      setBuses(busesResult);
+      setBuses(busesWithDrivers);
     } catch (error) {
       setError((error as Error).message);
     } finally {
@@ -82,19 +87,19 @@ const BusesViewBuses: React.FC = () => {
   };
 
   useEffect(() => {
-    setLoading(true); // Show loading initially
+    // setLoading(true); // Show loading initially
 
     fetchData(); // Initial fetch
 
-    const interval = setInterval(() => {
-      fetchData(); // Fetch updated bus data every 5 seconds (5000 ms)
-    }, 1000);
+    // const interval = setInterval(() => {
+    //   fetchData(); // Fetch updated bus data every 5 seconds (5000 ms)
+    // }, 1000);
 
-    return () => clearInterval(interval); // Cleanup the interval on component unmount
+    // return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  // if (loading) return <div>Loading...</div>;
+  if (error) return <div className="container mx-auto mt-20 p-4">Error: {error}</div>;
 
   return (
     <ProtectedComponent restrictedRoles={['user']}>
@@ -159,7 +164,7 @@ const BusesViewBuses: React.FC = () => {
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {bus.driver
-                      ? `${bus.driver.firstName} ${bus.driver.middleName ? bus.driver.middleName + ' ' : ''}${bus.driver.lastName}`
+                      ? `${bus.driver.name}`
                       : 'No Driver Assigned'}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">

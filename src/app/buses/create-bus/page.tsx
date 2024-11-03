@@ -18,10 +18,36 @@ interface Driver {
   lastName: string;
 }
 
+interface Bus {
+  id: string;           // Unique identifier for the bus
+  routeId: string;     // Identifier for the route
+  busName: string;     // Name of the bus
+  busNumber: string;   // Bus number
+  capacity: number;    // Maximum capacity of the bus
+  status: string;      // Current status of the bus (e.g., onroad, maintenance)
+}
+
+// Interface for the Driver
+interface Driver {
+  id: string;          // Unique identifier for the driver
+  userId: string;     // ID of the associated user
+  busId: string;      // ID of the bus associated with the driver
+  bus: Bus;           // The bus object associated with the driver
+}
+
+// Interface for the User
+interface User {
+  id: string;         // Unique identifier for the user
+  name: string;      // Name of the user
+  email: string;     // Email address of the user
+  role: string;      // Role of the user (e.g., driver, admin)
+  driver: Driver;    // The driver object associated with the user
+}
+
 const CreateBus: React.FC = () => {
 
   const [routes, setRoutes] = useState<RouteNames[]>([]);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [drivers, setDrivers] = useState<User[]>([]);
   const [driver, setDriver] = useState<string | null>(null);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const [isDriverOpen, setIsDriverOpen] = useState(false);
@@ -33,13 +59,18 @@ const CreateBus: React.FC = () => {
     name: string;
   } | null>(null);
 
-  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<User | null>(null);
 
   // State for bus details
   const [busName, setBusName] = useState('');
   const [busNumber, setBusNumber] = useState('');
   const [capacity, setCapacity] = useState('');
   const [status, setStatus] = useState('');
+
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [driverId, setDriverId] = useState<string>('');
+
 
   const [busLocationChannel, setBusChannel] = useState('');
   const [latFieldNumber, setLatFieldNumber] = useState('');
@@ -78,7 +109,7 @@ const CreateBus: React.FC = () => {
     setIsRouteOpen(false);
   };
 
-  const handleDriverSelect = (driver: Driver) => {
+  const handleDriverSelect = (driver: User) => {
     setSelectedDriver(driver);
     setIsDriverOpen(false);
   };
@@ -99,22 +130,33 @@ const CreateBus: React.FC = () => {
       }
     };
 
-    const fetchDrivers = async () => {
+    
+
+    const fetchDriver = async () => {
+      setLoading(true);
       try {
-        const response = await fetch('http://localhost:4000/drivers/index');
+        const response = await fetch(`http://localhost:4000/drivers/index`);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Failed to fetch driver data');
         }
-        const result: Driver[] = await response.json();
-        setDrivers(result);
+        
+        const result: User[] = await response.json(); // Expecting a User object
+        console.log(result)
+        setDrivers(result)
+        // setDriverId(result.id)
+        // setName(result.name);
+
       } catch (error) {
         setError((error as Error).message);
+      } finally {
+        setLoading(false);
       }
     };
+
     
 
     fetchRoutes();
-    fetchDrivers();
+    fetchDriver();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -153,7 +195,7 @@ const CreateBus: React.FC = () => {
       fieldNumber,
       capacity,
       status,
-      driverId: selectedDriver ? selectedDriver.id : null,
+      driverId: selectedDriver ? selectedDriver.driver.id : null,
       routeId: selectedRoute ? selectedRoute.id : null,
     };
 
@@ -427,7 +469,7 @@ const CreateBus: React.FC = () => {
                   onClick={handleDriverButtonClick}
                 >
                   {selectedDriver
-                    ? `${selectedDriver.firstName} ${selectedDriver.middleName ? selectedDriver.middleName + ' ' : ''}${selectedDriver.lastName}`
+                    ? `${selectedDriver.name}`
                     : 'Select Driver'}
                 </button>
 
@@ -452,7 +494,7 @@ const CreateBus: React.FC = () => {
                             onClick={() => handleDriverSelect(driver)}
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer z-50"
                           >
-                            {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
+                            {driver.name}
                           </div>
                         ))}
                     </div>
@@ -462,7 +504,7 @@ const CreateBus: React.FC = () => {
               {selectedDriver && (
                 <div className="mt-2 text-gray-700">
                   Selected Driver:{' '}
-                  {`${selectedDriver.firstName} ${selectedDriver.middleName ? selectedDriver.middleName + ' ' : ''}${selectedDriver.lastName}`}{' '}
+                  {selectedDriver.name}
                   (ID: {selectedDriver.id})
                 </div>
               )}
