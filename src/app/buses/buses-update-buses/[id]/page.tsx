@@ -20,12 +20,22 @@ const BusForm: React.FC = () => {
     routeId: string;
   }
 
-  interface Driver {
-    id: string;
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-  }
+  // Interface for the Driver
+interface Driver {
+  id: string;          // Unique identifier for the driver
+  userId: string;     // ID of the associated user
+  busId: string;      // ID of the bus associated with the driver
+  bus: Bus;           // The bus object associated with the driver
+}
+
+// Interface for the User
+interface User {
+  id: string;         // Unique identifier for the user
+  name: string;      // Name of the user
+  email: string;     // Email address of the user
+  role: string;      // Role of the user (e.g., driver, admin)
+  driver: Driver;    // The driver object associated with the user
+}
 
   interface BusLocationChannel{
     channelId: string;
@@ -56,15 +66,15 @@ const BusForm: React.FC = () => {
   const [status, setStatus] = useState<string>('');
   const [routeId, setRouteId] = useState<string>('');
 
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null); // Current selected driver
+  const [drivers, setDrivers] = useState<User[]>([]);
+  const [selectedDriver, setSelectedDriver] = useState<User | null>(null); // Current selected driver
   const [isDriverOpen, setIsDriverOpen] = useState(false);
 
   const handleDriverButtonClick = () => {
     setIsDriverOpen(!isDriverOpen);
   };
 
-  const handleDriverSelect = (driver: Driver) => {
+  const handleDriverSelect = (driver: User) => {
     setSelectedDriver(driver);
     setIsDriverOpen(false);
   };
@@ -90,6 +100,7 @@ const BusForm: React.FC = () => {
           throw new Error('Network response was not ok');
         }
         const result: Bus = await response.json();
+        console.log
         setBusName(result.busName);
         setBusNumber(result.busNumber);
         setCapacity(result.capacity);
@@ -99,10 +110,10 @@ const BusForm: React.FC = () => {
         // Fetch the driver based on the driver's ID from the bus data
         if (result.driver) {
           const driverResponse = await fetch(
-            `http://localhost:4000/drivers/${result.driver.id}`
+            `http://localhost:4000/drivers/${result.driver.userId}`
           );
           if (driverResponse.ok) {
-            const driverData: Driver = await driverResponse.json();
+            const driverData: User = await driverResponse.json();
             setSelectedDriver(driverData); // Set the selected driver based on the fetched data
           }
         }
@@ -155,7 +166,7 @@ const BusForm: React.FC = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const result: Driver[] = await response.json();
+        const result: User[] = await response.json();
         setDrivers(result);
       } catch (error) {
         setError((error as Error).message);
@@ -193,6 +204,8 @@ const BusForm: React.FC = () => {
       return;
     }
 
+    console.log(selectedDriver)
+
     try {
       const response = await fetch(`http://localhost:4000/buses/update`, {
         method: 'PUT',
@@ -210,7 +223,7 @@ const BusForm: React.FC = () => {
           longFieldNumber,
           busPassengerChannel,
           fieldNumber,
-          driverId: selectedDriver ? selectedDriver.id : null, // Send the selected driver ID
+          userId: selectedDriver ? selectedDriver.id : null, // Send the selected driver ID
           routeId,
 
         }),
@@ -424,7 +437,7 @@ const BusForm: React.FC = () => {
                 onClick={handleDriverButtonClick}
               >
                 {selectedDriver
-                  ? `Current Driver: ${selectedDriver.firstName} ${selectedDriver.middleName ? selectedDriver.middleName + ' ' : ''}${selectedDriver.lastName}`
+                  ? `Current Driver: ${selectedDriver.name}`
                   : 'Select Driver'}
               </button>
 
@@ -449,7 +462,7 @@ const BusForm: React.FC = () => {
                           onClick={() => handleDriverSelect(driver)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                         >
-                          {`${driver.firstName} ${driver.middleName ? driver.middleName + ' ' : ''}${driver.lastName}`}
+                          {`${driver.name}`}
                         </div>
                       ))}
                   </div>

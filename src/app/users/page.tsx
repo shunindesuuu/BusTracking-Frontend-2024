@@ -5,17 +5,17 @@ import { redirect } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 const Users = () => {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
-  if (status === 'loading') {
-    return null;
-  }
-  if (!session) {
-    redirect('/login');
-  }
-  if (session.user?.role !== 'admin') {
-    redirect('/');
-  }
+  // if (status === 'loading') {
+  //   return null;
+  // }
+  // if (!session) {
+  //   redirect('/login');
+  // }
+  // if (session.user?.role !== 'admin') {
+  //   redirect('/');
+  // }
   interface User {
     id: string;
     name: string;

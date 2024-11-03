@@ -4,36 +4,38 @@ import { redirect, useParams, useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 
+interface Bus {
+  id: string;           // Unique identifier for the bus
+  routeId: string;     // Identifier for the route
+  busName: string;     // Name of the bus
+  busNumber: string;   // Bus number
+  capacity: number;    // Maximum capacity of the bus
+  status: string;      // Current status of the bus (e.g., onroad, maintenance)
+}
+
+// Interface for the Driver
+interface Driver {
+  id: string;          // Unique identifier for the driver
+  userId: string;     // ID of the associated user
+  busId: string;      // ID of the bus associated with the driver
+  bus: Bus;           // The bus object associated with the driver
+}
+
+// Interface for the User
+interface User {
+  id: string;         // Unique identifier for the user
+  name: string;      // Name of the user
+  email: string;     // Email address of the user
+  role: string;      // Role of the user (e.g., driver, admin)
+  driver: Driver;    // The driver object associated with the user
+}
+
 const DriverForm: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
 
-  interface Bus {
-    id: string;           // Unique identifier for the bus
-    routeId: string;     // Identifier for the route
-    busName: string;     // Name of the bus
-    busNumber: string;   // Bus number
-    capacity: number;    // Maximum capacity of the bus
-    status: string;      // Current status of the bus (e.g., onroad, maintenance)
-}
 
-// Interface for the Driver
-interface Driver {
-    id: string;          // Unique identifier for the driver
-    userId: string;     // ID of the associated user
-    busId: string;      // ID of the bus associated with the driver
-    bus: Bus;           // The bus object associated with the driver
-}
-
-// Interface for the User
-interface User {
-    id: string;         // Unique identifier for the user
-    name: string;      // Name of the user
-    email: string;     // Email address of the user
-    role: string;      // Role of the user (e.g., driver, admin)
-    driver: Driver;    // The driver object associated with the user
-}
 
   // State for loading, error, and form fields
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,6 +50,8 @@ interface User {
   const [isBusOpen, setIsBusOpen] = useState(false);
 
   const handleBusButtonClick = () => {
+    console.log(buses)
+
     setIsBusOpen(!isBusOpen);
   };
 
@@ -56,17 +60,17 @@ interface User {
     setIsBusOpen(false);
   };
 
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
-  if (status === 'loading') {
-    return null;
-  }
-  if (!session) {
-    redirect('/login');
-  }
-  if (session.user?.role !== 'admin') {
-    redirect('/');
-  }
+  // if (status === 'loading') {
+  //   return null;
+  // }
+  // if (!session) {
+  //   redirect('/login');
+  // }
+  // if (session.user?.role !== 'admin') {
+  //   redirect('/');
+  // }
 
   // Fetch the driver data when the component loads
   useEffect(() => {
@@ -74,18 +78,18 @@ interface User {
       setLoading(true);
       try {
         const response = await fetch(`http://localhost:4000/drivers/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch driver data');
-        }
-        
-        const result: User = await response.json(); // Expecting a User object
+        if (!response.ok) throw new Error('Failed to fetch driver data');
+    
+        const result: User = await response.json(); // Assuming 'result' conforms to User interface
         setName(result.name);
         setEmail(result.email);
-        setBusId(result.driver.bus.id || null);
-
-        // Directly set the bus if available
-        if (result.driver.bus) {
+    
+        // Check if 'driver' and 'driver.bus' exist before setting the state
+        if (result.driver && result.driver.bus) {
+          setBusId(result.driver.bus.id || null);
           setSelectedBus(result.driver.bus);
+        } else {
+          setSelectedBus(null); // Clear selectedBus if no bus is assigned
         }
       } catch (error) {
         setError((error as Error).message);
@@ -102,7 +106,7 @@ interface User {
         }
         
         const result: Bus[] = await response.json(); // Expecting an array of Bus objects
-        setBuses(result);
+          setBuses(result);
       } catch (error) {
         setError((error as Error).message);
         toast.error(`Error loading buses: ${(error as Error).message}`);
@@ -191,29 +195,15 @@ interface User {
 
             {isBusOpen && (
               <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                <div className="py-1">
-                  {loading && (
-                    <div className="px-4 py-2 text-sm text-gray-700">
-                      Loading...
-                    </div>
-                  )}
-                  {error && (
-                    <div className="px-4 py-2 text-sm text-red-600">
-                      {error}
-                    </div>
-                  )}
-                  {!loading &&
-                    !error &&
-                    buses.map((bus) => (
-                      <div
-                        key={bus.id}
-                        onClick={() => handleBusSelect(bus)}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                      >
-                        {bus.busName}
-                      </div>
-                    ))}
+                {!loading && !error && buses?.map((bus) => (
+                <div
+                  key={bus.id}
+                  onClick={() => handleBusSelect(bus)}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  {bus.busName} {/* Display bus name or any other identifier */}
                 </div>
+              ))}
               </div>
             )}
           </div>
