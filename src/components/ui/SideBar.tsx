@@ -137,14 +137,6 @@ const SideBar: React.FC = () => {
                       <p className="text-sm">Available: 20</p>
                     </div>
                     <ProgressBar />
-                    <div className="flex flex-col justify-center align-middle h-1/2 p-2">
-                      <div className="flex text-xs justify-between">
-                        <p>ADDU</p>
-                        <p>GMALL</p>
-                        <p>VPLAZA</p>
-                        <p>ABRZA</p>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>

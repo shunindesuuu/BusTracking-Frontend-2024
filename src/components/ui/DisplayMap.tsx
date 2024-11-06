@@ -46,6 +46,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   const {setData} = useGlobalContext();
 
   const handleSetData = (bus: Buses) => {
+    console.log(bus)
     const newBusData = {
       id: bus.id,
       routeId: bus.routeId,
@@ -54,6 +55,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
       status: bus.status,
       busName: bus.busName,
       passCount: bus.passCount,
+      route: bus.route.routeName,
     };
     
     // Update the state with the bus data
