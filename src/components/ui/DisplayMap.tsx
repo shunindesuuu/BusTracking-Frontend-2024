@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { GlobalContextProvider, useGlobalContext } from '@/app/Context/busContext';
 
 interface DisplayMapProps {
   selectedRoute: string;
@@ -41,6 +42,23 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   const mapRef = useRef<L.Map | null>(null);
   const routeLayersRef = useRef<{ [key: string]: L.Polyline }>({});
   const busMarkersRef = useRef<{ [key: string]: L.CircleMarker }>({});
+
+  const {setData} = useGlobalContext();
+
+  const handleSetData = (bus: Buses) => {
+    const newBusData = {
+      id: bus.id,
+      routeId: bus.routeId,
+      busNumber: bus.busNumber,
+      capacity: bus.capacity,
+      status: bus.status,
+      busName: bus.busName,
+      passCount: bus.passCount,
+    };
+    
+    // Update the state with the bus data
+    setData(newBusData);
+  };
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -228,8 +246,8 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
           <b>Capacity:</b> ${bus.capacity} <br>
           <b>Passengers:</b> ${bus.passCount} <br>
           <b>Available Seats:</b> ${bus.capacity - parseInt(bus.passCount, 10)} <br>
-        `);
-  
+        `)
+        .on('click', () => handleSetData(bus));   
       busMarkersRef.current[bus.id] = marker;
     });
   }, [buses, selectedRoute]);
@@ -237,11 +255,11 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
 
 
   return (
-    <div
+       <div
       id="map"
       className="w-full bg-black cursor-default z-30"
       style={{ height: 'calc(100vh - 68px)', marginTop: '68px' }}
-    ></div>
+    ></div>   
   );
 };
 

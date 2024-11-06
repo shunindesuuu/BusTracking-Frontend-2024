@@ -8,7 +8,9 @@ import { PiSignOutBold } from 'react-icons/pi';
 import ProtectedComponent from './ProtectedComponent';
 import NavigationBar from './NavBar';
 import ProgressBar from './ProgessBar';
-import DisplayMap from '@/app/driver-map/page';
+
+import { GlobalContextProvider, useGlobalContext } from '@/app/Context/busContext';
+import SelectedBus from './SelectedBus';
 
 interface RouteNames {
   id: number;
@@ -25,8 +27,32 @@ const SideBar: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const {data} = useGlobalContext();
+
+
+  // useEffect(()=>{
+  //   console.log("bus data from context: "+data)
+  // },[data])
+
+  // useEffect (()=>{
+  //   setBusId('123456')
+  //   setData(
+  //       {
+  //       id: "12345",
+  //       routeId: "12345",
+  //       busNumber: "string",
+  //       capacity: 100,
+  //       status: "onroad",
+  //       busName: "bus test",
+  //       passCount: "40",
+  //       }
+  //   )
+
+  // })
+
   // Fetch the routes from the backend API
   useEffect(() => {
+    // console.log("context data: "+data)
     const fetchRoutes = async () => {
       try {
         const response = await fetch(
@@ -69,7 +95,7 @@ const SideBar: React.FC = () => {
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
           <div
-            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            className={`fixed top-0 left-0 p-5 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
               } md:translate-x-0 md:static md:h-auto z-40`}
           >
             <ProtectedComponent restrictedRoles={['user', 'driver']}>
@@ -85,6 +111,9 @@ const SideBar: React.FC = () => {
                     {item.title}
                   </Link>
                 ))}
+
+                    <SelectedBus/>
+
               </div>
             </ProtectedComponent>
 
