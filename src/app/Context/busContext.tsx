@@ -9,7 +9,14 @@ type Bus = {
     status: string;
     busName: string;
     passCount: string;
+    route: string;
 };
+
+interface RouteNames {
+    id: number;
+    routeName: string;
+    routeColor: string;
+}
 
 interface ContextProps {
     data: Bus | null;
@@ -29,30 +36,6 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
         console.log("Current bus data in context: ", data);
     }, [data]);
 
-    // Simulate data fetching to test the provider
-    useEffect(() => {
-        const fetchBusData = async () => {
-            try {
-                console.log("Fetching bus data...");
-
-                // Simulating an API call (replace with actual fetch request)
-                const response = await fetch('http://localhost:4000/bus-data'); // Your actual API endpoint
-                const fetchedData = await response.json();
-                console.log("Fetched bus data: ", fetchedData); // Log the fetched data
-
-                if (fetchedData) {
-                    setData(fetchedData); // Set the fetched data to context
-                    console.log("Bus data set in context: ", fetchedData); // Log when data is set
-                } else {
-                    console.log("No bus data received");
-                }
-            } catch (error) {
-                console.error("Error fetching bus data: ", error);
-            }
-        };
-
-        fetchBusData();
-    }, []); // Empty dependency array makes it run once when the component mounts
 
     return (
         <GlobalContext.Provider value={{ data, setData }}>
