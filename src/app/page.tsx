@@ -4,6 +4,7 @@ import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import RouteFilter from '@/components/ui/RouteFilter';
 import SideBar from '@/components/ui/SideBar';
 import React, { useState } from 'react';
+import { GlobalContextProvider } from './Context/busContext';
 
 export default function Home() {
   const [selectedRoute, setSelectedRoute] = useState('all');
@@ -19,7 +20,7 @@ export default function Home() {
         </div>
       </ProtectedComponent>
       {/* Map Component */}
-      <DisplayMap selectedRoute={selectedRoute} />
+          <DisplayMap selectedRoute={selectedRoute} />
     </main>
   );
 }

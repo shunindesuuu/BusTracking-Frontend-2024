@@ -2,20 +2,24 @@
 import React, { useEffect, useState } from 'react';
 import * as Progress from '@radix-ui/react-progress';
 
-const ProgressBar = () => {
-  const [progress, setProgress] = useState(13);
-  
+interface ProgressBarProps {
+  data: number; // Expected percentage
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ data }) => {
+  const [progress, setProgress] = useState(0); // Initial progress set to 0
+
   useEffect(() => {
-    const timer = setTimeout(() => setProgress(40), 500);
+    // Simulate loading or animate to `data` value over time
+    const timer = setTimeout(() => setProgress(data), 300);
     return () => clearTimeout(timer);
-  }, []);
+  }, [data]); // Run this effect whenever `data` changes
 
   return (
     <Progress.Root
       className="relative overflow-hidden bg-gray-100 rounded-full w-full h-[25px]"
       style={{
         // Fix overflow clipping in Safari
-        // https://gist.github.com/domske/b66047671c780a238b51c51ffde8d3a0
         transform: 'translateZ(0)',
       }}
       value={progress}

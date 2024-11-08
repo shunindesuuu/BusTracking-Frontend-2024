@@ -8,7 +8,9 @@ import { PiSignOutBold } from 'react-icons/pi';
 import ProtectedComponent from './ProtectedComponent';
 import NavigationBar from './NavBar';
 import ProgressBar from './ProgessBar';
-import DisplayMap from '@/app/driver-map/page';
+
+import { GlobalContextProvider, useGlobalContext } from '@/app/Context/busContext';
+import SelectedBus from './SelectedBus';
 
 interface RouteNames {
   id: number;
@@ -25,8 +27,11 @@ const SideBar: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const {data} = useGlobalContext();
+
   // Fetch the routes from the backend API
   useEffect(() => {
+    // console.log("context data: "+data)
     const fetchRoutes = async () => {
       try {
         const response = await fetch(
@@ -69,7 +74,7 @@ const SideBar: React.FC = () => {
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
           <div
-            className={`fixed top-0 left-0 p-10 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            className={`fixed top-0 left-0 p-5 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
               } md:translate-x-0 md:static md:h-auto z-40`}
           >
             <ProtectedComponent restrictedRoles={['user', 'driver']}>
@@ -85,41 +90,18 @@ const SideBar: React.FC = () => {
                     {item.title}
                   </Link>
                 ))}
+
+                    <SelectedBus/>
+
               </div>
             </ProtectedComponent>
 
             <ProtectedComponent restrictedRoles={['admin', 'driver']}>
-              <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 space-y-4 w-full">
-                <p className="mt-10 mb-2">Bus Information</p>
 
-                <div className="bg-white h-52 w-full rounded-md border">
-                  <div className="bg-white border-b w-full h-1/4 flex items-center justify-between p-2 rounded-t-md">
-                    <div className="flex gap-2">
-                      <p>Bus Number:</p>
-                      <p>12345</p>
-                    </div>
-                    <p className="underline text-green-400">Toril Line</p>
-                  </div>
+             <SelectedBus/>
 
-                  <div className="h-3/4 flex flex-col">
-                    <div className="w-full h-fit flex flex-col p-2">
-                      <p className="mb-1">Bus Capacity: 50</p>
-                      <p className="text-sm ">Taken: 30</p>
-                      <p className="text-sm">Available: 20</p>
-                    </div>
-                    <ProgressBar />
-                    <div className="flex flex-col justify-center align-middle h-1/2 p-2">
-                      <div className="flex text-xs justify-between">
-                        <p>ADDU</p>
-                        <p>GMALL</p>
-                        <p>VPLAZA</p>
-                        <p>ABRZA</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </ProtectedComponent>
+
             <ProtectedComponent restrictedRoles={['admin', 'user']}>
               <header className="w-full flex justify-between items-center mt-24 bg-green-500 p-2">
                 <h1 className="text-white font-bold">Bus Number 4132</h1>
