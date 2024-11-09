@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import SideBar from '@/components/ui/SideBar';
 import SessionWrapper from '@/components/SessionWrapper';
 import SessionHandler from '@/components/SessionHandler';
+import { GlobalContextProvider } from './Context/busContext';
 
 export const metadata = {
   title: 'Bus Tracking System Using ESP32 and GPS Module',
@@ -17,18 +18,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionWrapper>
-      <html lang="en" className={`${poppins.variable}`}>
-        <body className={`${poppins.className} flex flex-col`}>
-          <SessionHandler />
-          <div className="flex flex-row">
-            <SideBar />
-            <div className="flex-1">
-              <main>{children}</main>
+      <SessionWrapper>
+        <html lang="en" className={`${poppins.variable}`}>
+          <body className={`${poppins.className} flex flex-col`}>
+          <GlobalContextProvider>
+            <SessionHandler />
+            <div className="flex flex-row">
+                <SideBar />
+                <div className="flex-1">
+                <main>{children}</main>
+              </div>
             </div>
-          </div>
-        </body>
-      </html>
-    </SessionWrapper>
+            </GlobalContextProvider>
+
+          </body>
+        </html>
+      </SessionWrapper>
   );
 }
