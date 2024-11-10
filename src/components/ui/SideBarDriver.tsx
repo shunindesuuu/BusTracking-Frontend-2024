@@ -23,37 +23,40 @@ const SideBarDriver = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-   // Fetch the routes from the backend API
-   useEffect(() => {
-    // console.log("context data: "+data)
-    const fetchBus = async () => {
-        try {
-          const response = await fetch(`http://localhost:4000/buses/driver/${userId}`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const result: Bus = await response.json();
-      
-          // Second API call using result.id
-          const passengerResponse = await fetch(`http://localhost:4000/thingspeak/bus-passenger/${result.id}`);
-          if (!passengerResponse.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const passengerData: Bus = await passengerResponse.json();
-      
-          // Set the bus state with the passengerData (which is the bus)
-          setBus(passengerData);
-      
-        } catch (error) {
-          setError((error as Error).message);
-        } finally {
-          setLoading(false);
-        }
-      };
-      
-
+  const fetchBus = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/buses/driver/${userId}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result: Bus = await response.json();
+  
+      // Second API call using result.id
+      const passengerResponse = await fetch(`http://localhost:4000/thingspeak/bus-passenger/${result.id}`);
+      if (!passengerResponse.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const passengerData: Bus = await passengerResponse.json();
+  
+      // Set the bus state with the passengerData (which is the bus)
+      setBus(passengerData);
+  
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    // Call fetchBus immediately when the component mounts
     fetchBus();
-  }, [userId]);
+  
+    // Set interval to call fetchBus every 15 seconds (15000ms)
+    const intervalId = setInterval(fetchBus, 15000);
+  
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
   
   return (
     <div>
