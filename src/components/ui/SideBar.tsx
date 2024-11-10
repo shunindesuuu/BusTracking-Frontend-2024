@@ -11,58 +11,19 @@ import ProgressBar from './ProgessBar';
 
 import { GlobalContextProvider, useGlobalContext } from '@/app/Context/busContext';
 import SelectedBus from './SelectedBus';
+import SideBarDriver from './SideBarDriver';
 
-interface RouteNames {
-  id: number;
-  routeName: string;
-  routeColor: string;
-}
+
 
 const SideBar: React.FC = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState<RouteNames | null>(null);
-  const [routes, setRoutes] = useState<RouteNames[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  
 
-  const {data} = useGlobalContext();
 
-  // Fetch the routes from the backend API
-  useEffect(() => {
-    // console.log("context data: "+data)
-    const fetchRoutes = async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:4000/routes/index/coordinates'
-        );
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result: RouteNames[] = await response.json();
-        setRoutes(result);
-        if (result.length > 0) {
-          setSelectedRoute(result[0]); // Default to the first route
-        }
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRoutes();
-  }, []);
-  // Handle route selection
-  const handleRouteSelect = (route: RouteNames) => {
-    setSelectedRoute(route);
-  };
-
-  // Fake bus data for seat display
-  const busCapacity = 100;
-  const takenSeats = 75;
-  const availableSeats = busCapacity - takenSeats;
+ 
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -96,46 +57,16 @@ const SideBar: React.FC = () => {
               </div>
             </ProtectedComponent>
 
+              {/* user view */}
             <ProtectedComponent restrictedRoles={['admin', 'driver']}>
 
-             <SelectedBus/>
+                <SelectedBus/>
 
             </ProtectedComponent>
 
+            {/* driver view */}
             <ProtectedComponent restrictedRoles={['admin', 'user']}>
-              <header className="w-full flex justify-between items-center mt-24 bg-green-500 p-2">
-                <h1 className="text-white font-bold">Bus Number 4132</h1>
-              </header>
-              <div className="my-4">
-                <label className="block text-black font-bold mb-2 text-center">
-                  Change Destination
-                </label>
-                <div className="flex justify-center items-center space-x-4">
-                  {routes.map((route) => (
-                    <button
-                      key={route.id}
-                      onClick={() => handleRouteSelect(route)}
-                      className={`p-2 rounded border ${selectedRoute?.id === route.id
-                        ? 'bg-green-700 text-white'
-                        : 'bg-green-500 text-white'
-                        }`}
-                    >
-                      {route.routeName}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Seat Details */}
-              <div className="text-center">
-                <p>Bus Capacity: {busCapacity}</p>
-                <p>Taken: {takenSeats}</p>
-                <p>Available: {availableSeats}</p>
-                <p className="text-red-600 font-bold">
-                  Warning: {Math.round((takenSeats / busCapacity) * 100)}% Bus
-                  Capacity
-                </p>
-              </div>
+                <SideBarDriver/>
             </ProtectedComponent>
 
             {session && (
