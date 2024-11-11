@@ -11,8 +11,8 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async session({ session, token }) {
             if (session.user) {
-                // Fetch the user's role from the Express API using the email
                 try {
+                    // Fetch the user's ID and role from the Express API using the email
                     const response = await fetch("http://localhost:4000/users/get-user", {
                         method: "POST",
                         headers: {
@@ -24,18 +24,19 @@ export const authOptions: NextAuthOptions = {
                     if (response.ok) {
                         const user = await response.json();
                         session.user.role = user.role || "user"; // Default to "user" if no role is found
+                        session.user.id = user.id; // Assign userId to session
                     } else {
                         session.user.role = "user"; // Default role
                     }
                 } catch (error) {
-                    console.error("Failed to fetch user role:", error);
+                    console.error("Failed to fetch user data:", error);
                     session.user.role = "user"; // Fallback role
                 }
             }
             return session;
         },
         async signIn({ user, account, profile }) {
-            console.log("sign in attemp")
+            console.log("Sign in attempt");
             try {
                 // Check if the user exists in the database via Express API
                 const response = await fetch("http://localhost:4000/users/get-user", {
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
                     // If user exists, assign role to user object
                     const dbUser = await response.json();
                     user.role = dbUser.role;
+                    user.id = dbUser.id; // Assign userId to user object
                 }
 
                 return true;
