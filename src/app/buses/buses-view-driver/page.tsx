@@ -113,7 +113,15 @@ const BusesAssignDriver: React.FC = () => {
           >
             <thead>
               <tr>
-                {['#', 'Name', 'Email', 'Assigned Bus', 'Bus Number', 'Status', 'Actions'].map((header, index) => (
+                {[
+                  '#',
+                  'Name',
+                  'Email',
+                  'Assigned Bus',
+                  'Bus Number',
+                  'Status',
+                  'Actions',
+                ].map((header, index) => (
                   <th
                     key={index}
                     className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider"
@@ -133,9 +141,15 @@ const BusesAssignDriver: React.FC = () => {
               ) : (
                 users.map((user, index) => (
                   <tr key={user.id}>
-                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">{index + 1}</td>
-                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">{user.name}</td>
-                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">{user.email}</td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {index + 1}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.name}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                      {user.email}
+                    </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                       {user.driver ? user.driver.bus.busName : 'N/A'}
                     </td>
@@ -146,7 +160,10 @@ const BusesAssignDriver: React.FC = () => {
                       {user.driver ? user.driver.bus.status : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      <Link href={`buses-update-driver/${user.id}`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                      <Link
+                        href={`buses-update-driver/${user.id}`}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      >
                         Edit
                       </Link>
                     </td>
