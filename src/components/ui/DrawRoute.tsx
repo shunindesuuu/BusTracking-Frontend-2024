@@ -60,8 +60,6 @@ const DrawRoute: React.FC<DrawRouteProps> = ({ onUpdateLatLngs, color, initialLa
     }).addTo(mapRef.current);
 
     // Initialize polyline with initial latlngs
-    console.log(latlngs)
-
     polylineRef.current = L.polyline(
       initialLatlngs.map(point => [point.latitude, point.longitude] as LatLngExpression),
       { color: color || 'lightgreen' }

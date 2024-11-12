@@ -27,13 +27,16 @@ const page = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/routes/sections/${id}`);  
+        const response = await fetch(`http://localhost:4000/routes/sections/${id}`);
+        console.log(response)
+  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+
+
         const result: Sections[] = await response.json();
         setSections(result);
-        console.log(result)
       } catch (error) {
         setError((error as Error).message);  
       } finally {
