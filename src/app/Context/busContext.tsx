@@ -31,12 +31,6 @@ const GlobalContext = createContext<ContextProps>({
 export const GlobalContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [data, setData] = useState<Bus | null>(null);
 
-    // Debugging: Log whenever data is updated
-    useEffect(() => {
-        console.log("Current bus data in context: ", data);
-    }, [data]);
-
-
     return (
         <GlobalContext.Provider value={{ data, setData }}>
             {children}

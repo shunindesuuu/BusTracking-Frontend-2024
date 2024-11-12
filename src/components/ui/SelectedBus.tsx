@@ -1,48 +1,96 @@
 "use client";
 import { useGlobalContext } from '@/app/Context/busContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ProgressBar from './ProgessBar';
 
+interface Route {
+  id: string;
+  routeName: string;
+  routeColor: string;
+}
+
+interface Bus {
+  id: string;
+  routeId: string;
+  busNumber: string;
+  capacity: number;
+  status: string;
+  busName: string;
+  passCount: string;
+  route: Route;
+}
+
 const SelectedBus = () => {
-    const { data, setData } = useGlobalContext();
+  const { data } = useGlobalContext();
+  const [bus, setBus] = useState<Bus | null>(null);
 
-    let percent: number = (parseInt(data?.passCount || "0") / (data?.capacity || 1)) * 100;
+  useEffect(() => {
+    const fetchBusData = async () => {
+      if (!data || !data.id) return;
 
-    useEffect(() => {
-        console.log("Selected bus data from context:", data);
-      }, [data]); 
+      try {
+        const response = await fetch(`http://localhost:4000/thingspeak/bus-passenger/${data.id}`);
+        if (response.ok) {
+          const result = await response.json();
 
-  if (!data) {
-    return <div className='bg-gray-100 h-fit rounded-md border p-3 mt-16'>
-              <p className="">Select Bus</p>
+          // Dynamically update the route if it's a string in `data`
+          const transformedBus: Bus = {
+            ...result,
+            route: {
+              id: result.route.id, // from API response
+              routeName: data.route || result.route.routeName, // fallback to `data.route` if string
+              routeColor: result.route.routeColor, // from API response
+            }
+          };
+          
+          setBus(transformedBus);
+          console.log("Bus data updated");
+        } else {
+          console.error("Failed to fetch data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-    </div>; // Shows when data is null or undefined
+    fetchBusData();
+    const intervalId = setInterval(fetchBusData, 15000);
+
+    return () => clearInterval(intervalId);
+  }, [data]);
+
+  const percent = bus ? (parseInt(bus.passCount || "0") / (bus.capacity || 1)) * 100 : 0;
+
+  if (!bus || !bus.id) {
+    return (
+      <div className='bg-gray-100 h-fit rounded-md border p-3 mt-16'>
+        <p>Select Bus</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col justify-start text-base mt-24 lg:mt-16  w-full">
+    <div className="flex flex-col justify-start text-base mt-24 lg:mt-16 w-full">
+      <div className="bg-white h-fit w-full border rounded-md">
+        <div className="bg-white border-b w-full h-1/4 flex items-center justify-between p-2 rounded-md">
+          <div className="flex gap-2">
+            <p>Bus Number:</p>
+            <p>{bus.busNumber}</p>
+          </div>
+          <p className="underline text-green-400">{bus.route.routeName}</p> {/* Display routeName from API */}
+        </div>
 
-  <div className="bg-white h-fit w-full border rounded-md">
-    <div className="bg-white border-b w-full h-1/4 flex items-center justify-between p-2  rounded-md">
-      <div className="flex gap-2">
-        <p>Bus Number:</p>
-        <p>{data.busNumber}</p> {/* Display bus number */}
+        <div className="h-3/4 flex flex-col p-3 rounded-b-md">
+          <div className="w-full h-fit flex flex-col">
+            <p>Bus Capacity: {bus.capacity}</p>
+            <p>Taken: {bus.passCount}</p>
+            <p>Available: {bus.capacity - parseInt(bus.passCount)}</p>
+          </div>
+
+          <ProgressBar data={percent} />
+        </div>
       </div>
-      <p className="underline text-green-400">{data.route}</p> {/* Display route name */}
     </div>
-
-    <div className="h-3/4 flex flex-col p-3 rounded-b-md">
-      <div className="w-full h-fit flex flex-col ">
-        <p className="">Bus Capacity: {data.capacity}</p> {/* Display capacity */}
-        <p className="">Taken: {data.passCount}</p> {/* Display passenger count */}
-        <p className="  ">Available: {data.capacity - parseInt(data.passCount)}</p> {/* Calculate available seats */}
-      </div>
-
-      <ProgressBar data={percent} /> {/* Assuming this is a component to display bus capacity usage */}
-    </div>
-  </div>
-</div>
-
   );
 };
 

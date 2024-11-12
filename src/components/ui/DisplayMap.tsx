@@ -46,7 +46,6 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   const {setData} = useGlobalContext();
 
   const handleSetData = (bus: Buses) => {
-    console.log(bus)
     const newBusData = {
       id: bus.id,
       routeId: bus.routeId,
@@ -127,7 +126,6 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     });
 
     setBuses(combinedBuses);
-    console.log(combinedBuses)
     setLoading(false);
   };
 
