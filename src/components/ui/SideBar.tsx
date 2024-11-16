@@ -31,9 +31,8 @@ const SideBar: React.FC = () => {
         <NavigationBar toggleSidebar={toggleSidebar} />
         <div className="relative flex h-screen">
           <div
-            className={`fixed top-0 left-0 p-5 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 md:static md:h-auto z-40`}
+            className={`fixed top-0 left-0 p-5 flex flex-col w-[350px] h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+              } md:translate-x-0 md:static md:h-auto z-40`}
           >
             <ProtectedComponent restrictedRoles={['user', 'driver']}>
               <div className="flex flex-col justify-start text-base mt-24 space-y-4">
@@ -41,11 +40,10 @@ const SideBar: React.FC = () => {
                   <Link
                     key={item.id}
                     href={item.link}
-                    className={`nav-item px-6 py-3 text-black rounded-md border border-1 ${
-                      pathname === item.link
+                    className={`nav-item px-6 py-3 text-black rounded-md border border-1 ${pathname === item.link
                         ? 'bg-green-500 text-white'
                         : 'hover:bg-gray-100'
-                    }`}
+                      }`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     {item.title}

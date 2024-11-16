@@ -42,7 +42,7 @@ const SelectedBus = () => {
               routeColor: result.route.routeColor, // from API response
             }
           };
-          
+
           setBus(transformedBus);
           console.log("Bus data updated");
         } else {
