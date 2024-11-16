@@ -59,7 +59,7 @@ const RouteForm: React.FC = () => {
   useEffect(() => {
     const fetchRoute = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/routes/get-route/${id}`);
+        const response = await fetch(`http://3.27.197.150:4000/routes/get-route/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -97,7 +97,7 @@ const RouteForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        const response = await fetch('http://localhost:4000/routes/update', {
+        const response = await fetch('http://3.27.197.150:4000/routes/update', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

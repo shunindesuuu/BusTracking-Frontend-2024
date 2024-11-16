@@ -95,7 +95,7 @@ interface User {
   useEffect(() => {
     const fetchBus = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/${id}`);
+        const response = await fetch(`http://3.27.197.150:4000/buses/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -110,7 +110,7 @@ interface User {
         // Fetch the driver based on the driver's ID from the bus data
         if (result.driver) {
           const driverResponse = await fetch(
-            `http://localhost:4000/drivers/${result.driver.userId}`
+            `http://3.27.197.150:4000/drivers/${result.driver.userId}`
           );
           if (driverResponse.ok) {
             const driverData: User = await driverResponse.json();
@@ -126,7 +126,7 @@ interface User {
 
     const fetchBusLocChannel = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/get-loc-channel/${id}`);
+        const response = await fetch(`http://3.27.197.150:4000/buses/get-loc-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -145,7 +145,7 @@ interface User {
 
     const fetchBusPassChannel = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/get-pass-channel/${id}`);
+        const response = await fetch(`http://3.27.197.150:4000/buses/get-pass-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -162,7 +162,7 @@ interface User {
 
     const fetchDrivers = async () => {
       try {
-        const response = await fetch('http://localhost:4000/drivers/index');
+        const response = await fetch('http://3.27.197.150:4000/drivers/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -207,7 +207,7 @@ interface User {
     console.log(selectedDriver)
 
     try {
-      const response = await fetch(`http://localhost:4000/buses/update`, {
+      const response = await fetch(`http://3.27.197.150:4000/buses/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
