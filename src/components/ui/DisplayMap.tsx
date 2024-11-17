@@ -232,7 +232,8 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
     filteredBuses.forEach(bus => {
       const latitude = parseFloat(bus.latitude); // Ensure latitude is a number
       const longitude = parseFloat(bus.longitude); // Ensure longitude is a number
-  
+
+      console.log({latitude, longitude})
       const marker = L.circleMarker([latitude, longitude], {
         radius: 9,
         color: bus.route.routeColor,
