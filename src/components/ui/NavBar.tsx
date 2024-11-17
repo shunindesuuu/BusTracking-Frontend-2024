@@ -19,25 +19,25 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ toggleSidebar }) => {
 
   return (
     <div className="relative z-[500]">
-      <div className="fixed top-0 w-full z-50 bg-[#34C759]">
-        <div className="p-5 flex justify-between items-center">
+      <div className="fixed top-0 w-full z-50 md:h-[70px] bg-[#34C759]">
+        <div className="p-4 flex justify-between items-center">
           {/* Container for Burger Icon and Title */}
           <div className="flex items-center">
             {/* Burger Icon */}
             <button
-              className="md:hidden p-4 text-white z-50"
+              className="md:hidden p-2 text-white z-50"
               onClick={handleToggle}
             >
               <Image
                 src={isDropdownOpen ? ExitBurger : Burger}
                 alt="Burger Icon"
-                className="cursor-pointer sm:w-[65px] sm:h-[53px] xsm:w-[43.33px] xsm:h-[35.33px]"
+                className="cursor-pointer w-8 h-8 sm:w-10 sm:h-10"
               />
             </button>
 
             {/* Davao Bus Tracker Title */}
             <Link href="/">
-              <p className="text-lg text-white font-semibold ml-2"> {/* Adjust margin as needed */}
+              <p className="text-lg text-white font-semibold ml-2">
                 Davao Bus Tracker
               </p>
             </Link>

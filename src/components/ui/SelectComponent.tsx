@@ -1,12 +1,7 @@
 import React from 'react';
-
 import * as Select from '@radix-ui/react-select';
 import classnames from 'classnames';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@radix-ui/react-icons';
+import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
 interface RouteNames {
   id: number;
@@ -43,7 +38,7 @@ interface SelectComponentProps {
 const SelectComponent: React.FC<SelectComponentProps & { onSelectRoute: (routeName: string) => void; }> = ({ routes, onSelectRoute }) => {
   const sortedRoutes = [...routes].sort((a, b) => a.routeName.localeCompare(b.routeName));
   return (
-    <div className="inline-block relative shadow-lg rounded-lg border border-gray-200 p-2 bg-white">
+    <div className="inline-block relative shadow-lg rounded-lg border border-gray-200 p-2 bg-white w-full max-w-xs md:max-w-sm lg:max-w-md " style={{ width: '150px' }}>
       <Select.Root onValueChange={onSelectRoute}>
         <Select.Trigger
           className="inline-flex items-center justify-between rounded-lg px-4 py-2 text-[12px] leading-none h-[30px] gap-2 bg-white text-black hover:bg-gray-50 border border-gray-300 outline-none w-full shadow-sm"
