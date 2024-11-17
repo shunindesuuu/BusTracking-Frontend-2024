@@ -1,9 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
-import DisplayMap from '@/components/ui/DisplayMap';
+// import DisplayMap from '@/components/ui/DisplayMap';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const DisplayMap = dynamic(
+  () => import('@/components/ui/DisplayMap'),
+  { ssr: false }
+);
 
 interface RouteNames {
   id: number;
