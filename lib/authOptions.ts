@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
             if (session.user) {
                 try {
                     // Fetch the user's ID and role from the Express API using the email
-                    const response = await fetch("https:/3.27.197.150:4000//users/get-user", {
+                    const response = await fetch("https://3.27.197.150:4000/users/get-user", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
