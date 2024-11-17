@@ -40,7 +40,7 @@ const Driver = () => {
     const fetchRoutes = async () => {
       try {
         const response = await fetch(
-          'http://3.27.197.150:4000/routes/index/coordinates'
+          'https://3.27.197.150:4000/routes/index/coordinates'
         );
         if (!response.ok) {
           throw new Error('Network response was not ok');

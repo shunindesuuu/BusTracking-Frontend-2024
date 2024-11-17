@@ -25,7 +25,7 @@ const Buses: React.FC = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch('http://3.27.197.150:4000/routes/index');
+        const response = await fetch('https://3.27.197.150:4000/routes/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
