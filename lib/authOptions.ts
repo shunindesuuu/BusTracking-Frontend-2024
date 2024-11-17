@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
             if (session.user) {
                 try {
                     // Fetch the user's ID and role from the Express API using the email
-                    const response = await fetch("http://3.27.197.150:4000/users/get-user", {
+                    const response = await fetch("https://3.27.197.150:4000/users/get-user", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
             console.log("Sign in attempt");
             try {
                 // Check if the user exists in the database via Express API
-                const response = await fetch("http://3.27.197.150:4000/users/get-user", {
+                const response = await fetch("https://3.27.197.150:4000/users/get-user", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
 
                 if (response.status === 404) {
                     // If user doesn't exist, create a new one
-                    await fetch("http://3.27.197.150:4000/users/create", {
+                    await fetch("https://3.27.197.150:4000/users/create", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

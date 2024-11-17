@@ -29,7 +29,7 @@ const SelectedBus = () => {
       if (!data || !data.id) return;
 
       try {
-        const response = await fetch(`http://3.27.197.150:4000/thingspeak/bus-passenger/${data.id}`);
+        const response = await fetch(`https://3.27.197.150:4000/thingspeak/bus-passenger/${data.id}`);
         if (response.ok) {
           const result = await response.json();
 
