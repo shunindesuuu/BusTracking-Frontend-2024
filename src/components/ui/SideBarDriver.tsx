@@ -25,14 +25,14 @@ const SideBarDriver = () => {
 
   const fetchBus = async () => {
     try {
-      const response = await fetch(`http://3.27.197.150:4000/buses/driver/${userId}`);
+      const response = await fetch(`https://3.27.197.150:4000/buses/driver/${userId}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const result: Bus = await response.json();
 
       // Second API call using result.id
-      const passengerResponse = await fetch(`http://3.27.197.150:4000/thingspeak/bus-passenger/${result.id}`);
+      const passengerResponse = await fetch(`https://3.27.197.150:4000/thingspeak/bus-passenger/${result.id}`);
       if (!passengerResponse.ok) {
         throw new Error('Network response was not ok');
       }
