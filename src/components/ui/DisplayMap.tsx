@@ -64,7 +64,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch('https://3.27.197.150:4000/routes/index/coordinates');
+        const response = await fetch('http://3.27.197.150:4000/routes/index/coordinates');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -85,7 +85,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
 
   const fetchBuses = async () => {
     try {
-      const response = await fetch('https://3.27.197.150:4000/thingspeak/bus-location');
+      const response = await fetch('http://3.27.197.150:4000/thingspeak/bus-location');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -99,7 +99,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
 
   const fetchBusPassCount = async () => {
     try {
-      const response = await fetch('https://3.27.197.150:4000/thingspeak/all-bus-passengers');
+      const response = await fetch('http://3.27.197.150:4000/thingspeak/all-bus-passengers');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

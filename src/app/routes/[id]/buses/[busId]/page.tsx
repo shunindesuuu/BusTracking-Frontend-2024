@@ -39,7 +39,7 @@ const Page = () => {
     console.log(busId)
     const fetchBuses = async () => {
       try {
-        const response = await fetch(`https://3.27.197.150:4000/thingspeak/bus-passenger/${busId}`);  
+        const response = await fetch(`http://3.27.197.150:4000/thingspeak/bus-passenger/${busId}`);  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

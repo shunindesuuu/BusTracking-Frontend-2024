@@ -27,7 +27,7 @@
     useEffect(() => {
       const fetchBuses = async () => {
         try {
-          const response = await fetch(`https://3.27.197.150:4000/thingspeak/passengers/route/bus/${id}`);  
+          const response = await fetch(`http://3.27.197.150:4000/thingspeak/passengers/route/bus/${id}`);  
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }

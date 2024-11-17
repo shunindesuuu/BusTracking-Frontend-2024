@@ -49,7 +49,7 @@ const RouteForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch('https://3.27.197.150:4000/routes/create', {
+    const response = await fetch('http://3.27.197.150:4000/routes/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

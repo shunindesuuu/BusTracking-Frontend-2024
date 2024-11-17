@@ -66,7 +66,7 @@ const BusesAssignDriver: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://3.27.197.150:4000/drivers/index');
+        const response = await fetch('http://3.27.197.150:4000/drivers/index');
         if (!response.ok) throw new Error('Network response was not ok');
         const usersResult: User[] = await response.json();
         setUsers(usersResult);

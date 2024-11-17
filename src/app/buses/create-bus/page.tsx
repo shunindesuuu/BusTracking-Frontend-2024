@@ -117,7 +117,7 @@ const CreateBus: React.FC = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch('https://3.27.197.150:4000/routes/index');
+        const response = await fetch('http://3.27.197.150:4000/routes/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -135,7 +135,7 @@ const CreateBus: React.FC = () => {
     const fetchDriver = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://3.27.197.150:4000/drivers/index`);
+        const response = await fetch(`http://3.27.197.150:4000/drivers/index`);
         if (!response.ok) {
           throw new Error('Failed to fetch driver data');
         }
@@ -200,7 +200,7 @@ const CreateBus: React.FC = () => {
     };
 
     try {
-      const response = await fetch('https://3.27.197.150:4000/buses/create', {
+      const response = await fetch('http://3.27.197.150:4000/buses/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
