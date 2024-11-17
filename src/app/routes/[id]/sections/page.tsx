@@ -27,7 +27,7 @@ const page = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/routes/sections/${id}`);
+        const response = await fetch(`http://3.27.197.150:4000/routes/sections/${id}`);
         console.log(response)
   
         if (!response.ok) {

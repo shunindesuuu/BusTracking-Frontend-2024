@@ -58,8 +58,8 @@ const BusesViewBuses: React.FC = () => {
   const fetchData = async () => {
     try {
       const [busesResponse, driversResponse] = await Promise.all([
-        fetch('http://localhost:4000/buses/index'), // Adjust the endpoint as needed
-        fetch('http://localhost:4000/drivers/index'), // Adjust the endpoint as needed
+        fetch('http://3.27.197.150:4000/buses/index'), // Adjust the endpoint as needed
+        fetch('http://3.27.197.150:4000/drivers/index'), // Adjust the endpoint as needed
       ]);
 
       if (!busesResponse.ok || !driversResponse.ok) {
