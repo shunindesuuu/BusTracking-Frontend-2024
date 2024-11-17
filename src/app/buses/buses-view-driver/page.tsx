@@ -151,13 +151,13 @@ const BusesAssignDriver: React.FC = () => {
                       {user.email}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.driver ? user.driver.bus.busName : 'N/A'}
+                      {user.driver && user.driver.bus ? user.driver.bus.busName : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.driver ? user.driver.bus.busNumber : 'N/A'}
+                      {user.driver && user.driver.bus ? user.driver.bus.busNumber : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.driver ? user.driver.bus.status : 'N/A'}
+                      {user.driver && user.driver.bus ? user.driver.bus.status : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                       <Link

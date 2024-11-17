@@ -3,7 +3,6 @@ const nextConfig = {
     async headers() {
         return [
             {
-                // Match `/routes/index` API
                 source: "/routes/index",
                 headers: [
                     { key: "Access-Control-Allow-Credentials", value: "true" },
@@ -13,7 +12,6 @@ const nextConfig = {
                 ],
             },
             {
-                // Match `/routes/index/coordinates` API
                 source: "/routes/index/coordinates",
                 headers: [
                     { key: "Access-Control-Allow-Credentials", value: "true" },
@@ -23,7 +21,6 @@ const nextConfig = {
                 ],
             },
             {
-                // Match `/thingspeak/bus-location` API
                 source: "/thingspeak/bus-location",
                 headers: [
                     { key: "Access-Control-Allow-Credentials", value: "true" },
@@ -33,7 +30,6 @@ const nextConfig = {
                 ],
             },
             {
-                // Match `/thingspeak/all-bus-passengers` API
                 source: "/thingspeak/all-bus-passengers",
                 headers: [
                     { key: "Access-Control-Allow-Credentials", value: "true" },
