@@ -145,7 +145,7 @@ interface User {
 
     const fetchBusPassChannel = async () => {
       try {
-        const response = await fetch(`http://3.27.197.150:4000/buses/get-pass-channel/${id}`);
+        const response = await fetch(`https://3.27.197.150:4000/buses/get-pass-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
