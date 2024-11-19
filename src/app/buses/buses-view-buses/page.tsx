@@ -27,9 +27,7 @@ interface Bus {
   busName: string;
   capacity: string; // Updated to string to match the fetched data
   status: string;
-  _count: {
-    passengers: number; // Add the passenger count from Prisma
-  };
+  passCount: string
   driver: User | null; // Adjusted to handle cases where a driver may not be assigned
 }
 
@@ -58,7 +56,7 @@ const BusesViewBuses: React.FC = () => {
   const fetchData = async () => {
     try {
       const [busesResponse, driversResponse] = await Promise.all([
-        fetch('https://3.27.197.150:4000/buses/index'), // Adjust the endpoint as needed
+        fetch('https://3.27.197.150:4000/thingspeak/all-bus-passengers'), // Adjust the endpoint as needed
         fetch('https://3.27.197.150:4000/drivers/index'), // Adjust the endpoint as needed
       ]);
 
@@ -160,7 +158,7 @@ const BusesViewBuses: React.FC = () => {
                     {bus.capacity}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                    {bus._count.passengers}
+                    {bus.passCount}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {bus.driver

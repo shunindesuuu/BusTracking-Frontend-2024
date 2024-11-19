@@ -233,11 +233,18 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ selectedRoute }) => {
       const latitude = parseFloat(bus.latitude); // Ensure latitude is a number
       const longitude = parseFloat(bus.longitude); // Ensure longitude is a number
   
+      let fillColor = ""
+       
+      if(parseInt(bus.passCount) >= bus.capacity){
+        fillColor = "#cccccc"
+      }else{
+        fillColor = "#34C759"
+      }
       const marker = L.circleMarker([latitude, longitude], {
         radius: 9,
         color: bus.route.routeColor,
-        fillColor: bus.route.routeColor,
-        fillOpacity: 0.5,
+        fillColor: fillColor,
+        fillOpacity: 1,
       })
         .addTo(mapRef.current!)
         .bindPopup(`
