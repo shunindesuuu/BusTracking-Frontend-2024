@@ -167,8 +167,8 @@ const page = () => {
 
 
   return (
-    <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
-      <div className='flex justify-between items-center mt-28'>
+    <div className="flex flex-col justify-center container mx-auto mt-16 p-5">
+      <div className='flex justify-between items-center'>
         <div>{routeName}</div>
         <Link id='editbutton' href={`${id}/update/${id}`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit px-5 py-1 rounded-md'>Edit</Link>
       </div>
