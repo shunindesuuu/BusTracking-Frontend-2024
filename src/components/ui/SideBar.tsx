@@ -46,15 +46,14 @@ const SideBar: React.FC = () => {
                       key={item.id}
                       href={item.link}
                       className={`nav-item px-6 py-3 text-black rounded-md border border-1 ${pathname === item.link
-                          ? 'bg-green-500 text-white'
-                          : 'hover:bg-gray-100'
+                        ? 'bg-green-500 text-white'
+                        : 'hover:bg-gray-100'
                         }`}
                       onClick={() => setSidebarOpen(false)}
                     >
                       {item.title}
                     </Link>
                   ))}
-
                   <SelectedBus />
                 </div>
               </ProtectedComponent>
