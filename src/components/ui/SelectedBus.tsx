@@ -86,7 +86,6 @@ const SelectedBus = () => {
             <p>Taken: {bus.passCount}</p>
             <p>Available: {bus.capacity - parseInt(bus.passCount)}</p>
           </div>
-
           <ProgressBar data={percent} />
         </div>
       </div>
