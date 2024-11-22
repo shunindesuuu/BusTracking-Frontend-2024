@@ -32,17 +32,17 @@ interface Bus {
 }
 
 const BusesViewBuses: React.FC = () => {
-  // const { data: session, status } = useSession();
+  const { data: session, status } = useSession();
 
-  // if (status === 'loading') {
-  //   return null;
-  // }
-  // if (!session) {
-  //   redirect('/login');
-  // }
-  // if (session.user?.role !== 'admin') {
-  //   redirect('/');
-  // }
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   const router = useRouter();
   const [buses, setBuses] = useState<Bus[]>([]);

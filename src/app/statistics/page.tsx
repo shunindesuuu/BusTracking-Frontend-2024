@@ -1,7 +1,20 @@
 'use client';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
 const Statistics = () => {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
   return (
     <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
       <h2 className="text-center text-2xl font-semibold mb-8">
@@ -69,3 +82,4 @@ const Statistics = () => {
 };
 
 export default Statistics;
+

@@ -45,7 +45,6 @@ const BusesAssignDriver: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { data: session, status } = useSession();
 
   const handleBackClick = () => {
     router.push('/buses');
@@ -55,12 +54,17 @@ const BusesAssignDriver: React.FC = () => {
     router.push('/buses/buses-create-driver');
   };
 
-  useEffect(() => {
-    // Redirect if not admin
-    if (status === 'authenticated' && session.user?.role !== 'admin') {
-      router.push('/');
-    }
-  }, [status, session, router]);
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +86,6 @@ const BusesAssignDriver: React.FC = () => {
     }
   }, [status, session]);
 
-  if (status === 'loading') return null; // Wait for session status
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
