@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 const Users = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   if (status === 'loading') {
     return null;
@@ -16,7 +16,7 @@ const Users = () => {
   if (session.user?.role !== 'admin') {
     redirect('/');
   }
-  
+
   interface User {
     id: string;
     name: string;
