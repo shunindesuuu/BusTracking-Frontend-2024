@@ -169,24 +169,21 @@ const page = () => {
   }, [data, channel]);
 
   const confirmArchive = async () => {
+    try {
+      const response = await fetch(`https://3.27.197.150:4000/routes/archive/${id}`);
+      console.log(response)
 
-    router.push('/routes'); 
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-    // try {
-    //   const response = await fetch(`https://3.27.197.150:4000/routes/sections/${id}`);
-    //   console.log(response)
+      router.push('/routes'); 
 
-    //   if (!response.ok) {
-    //     throw new Error('Network response was not ok');
-    //   }
-
-    //   router.push('/routes'); 
-
-    // } catch (error) {
-    //   setError((error as Error).message);  
-    // } finally {
-    //   setLoading(false);
-    // }
+    } catch (error) {
+      setError((error as Error).message);  
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!id) {
