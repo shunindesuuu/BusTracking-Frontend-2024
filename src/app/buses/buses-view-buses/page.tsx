@@ -110,6 +110,7 @@ const BusesViewBuses: React.FC = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+      setModalVisible(false)
       fetchData();
 
     } catch (error) {
