@@ -49,6 +49,12 @@ const BusesViewBuses: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
+
+  
+
+
   const handleBackClick = () => {
     router.push('/buses');
   };
@@ -89,13 +95,30 @@ const BusesViewBuses: React.FC = () => {
 
     fetchData(); // Initial fetch
 
-    // const interval = setInterval(() => {
-    //   fetchData(); // Fetch updated bus data every 5 seconds (5000 ms)
-    // }, 1000);
+    const interval = setInterval(() => {
+      fetchData(); // Fetch updated bus data every 5 seconds (5000 ms)
+    }, 15000);
 
-    // return () => clearInterval(interval); // Cleanup the interval on component unmount
+    return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, []);
 
+  const confirmArchive = async () => {
+    try {
+      const response = await fetch(`https://3.27.197.150:4000/buses/archive/${selectedBus?.id}`);
+      console.log(selectedBus?.id)
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      setModalVisible(false)
+      fetchData();
+
+    } catch (error) {
+      setError((error as Error).message);  
+    } finally {
+      setLoading(false);
+    }
+  };
   // if (loading) return <div>Loading...</div>;
   if (error) return <div className="container mx-auto mt-20 p-4">Error: {error}</div>;
 
@@ -140,6 +163,7 @@ const BusesViewBuses: React.FC = () => {
                 <th className="px-5 py-3 border-b-2 border-gray-500 text-left text-base font-semibold text-black uppercase tracking-wider">
                   Actions
                 </th>
+                
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -168,18 +192,54 @@ const BusesViewBuses: React.FC = () => {
                   <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                     {bus.status}
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
+                  <td className="px-5 py-5 border-b border-gray-500 text-sm text-black flex gap-3">
                     <Link
                       href={`buses-update-buses/${bus.id}`}
                       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
                       Edit
                     </Link>
+
+                    <button
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => {
+                        setModalVisible(true); // First action
+                        setSelectedBus(bus); // Second action
+                      }}
+                    >
+                      Archive
+                    </button>
                   </td>
+                  
                 </tr>
               ))}
             </tbody>
           </table>
+           {/* Modal */}
+       {modalVisible && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-bold">Confirm Archive</h2>
+              <p>
+                Are you sure you want to archive {selectedBus?.busName} route?
+              </p>
+              <div className="mt-4 flex justify-end space-x-2">
+                <button
+                  onClick={() => setModalVisible(false)}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmArchive}
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </ProtectedComponent>

@@ -109,7 +109,7 @@ const Page = () => {
           <div>Average Per Hour</div>
           {bus ? (
             <iframe
-              src={`https://api.thingspeak.com/channels/${bus.busChannel.channelId}/charts/${bus.busChannel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
+              src={`https://api.thingspeak.com/channels/${bus.busChannel.channelId}/charts/${bus.busChannel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto&yaxis=Number%20of%20Passengers&results=500`}
               className="w-full h-[250px] border"
               frameBorder="0"
               allowFullScreen

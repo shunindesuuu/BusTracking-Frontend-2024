@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { redirect, useRouter } from 'next/navigation';
+
 
 const page = () => {
   const params = useParams();
@@ -9,6 +11,9 @@ const page = () => {
 
   const searchParams = useSearchParams();
   const routeName = searchParams.get('routeName') || '';
+
+  const router = useRouter();
+
   // Define the Route interface
   interface Route {
     id: string;
@@ -61,6 +66,10 @@ const page = () => {
   const [error, setError] = useState<string | null>(null)
   const [totalCapacity, setTotalCapacity] = useState<number>(0);
   const [latestPassengers, setLatestPassengers] = useState<string | null>(null)
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
+
 
 
   useEffect(() => {
@@ -159,6 +168,24 @@ const page = () => {
     }
   }, [data, channel]);
 
+  const confirmArchive = async () => {
+    try {
+      const response = await fetch(`https://3.27.197.150:4000/routes/archive/${id}`);
+      console.log(response)
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      router.push('/routes'); 
+
+    } catch (error) {
+      setError((error as Error).message);  
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!id) {
     return <div>Error: Route ID is missing.</div>;
   }
@@ -167,11 +194,15 @@ const page = () => {
 
 
   return (
-    <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
-      <div className='flex justify-between items-center mt-28'>
+    <div className="flex flex-col min-w-[320px] mx-auto mt-24 lg:mt-20 px-3 xs:px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
+      <div className='flex justify-between items-center'>
         <div>{routeName}</div>
+        <div className='flex gap-2'>
         <Link id='editbutton' href={`${id}/update/${id}`} className='bg-gray-200 hover:bg-gray-100 active:bg-gray-200 h-fit w-fit px-5 py-1 rounded-md'>Edit</Link>
+        <button className='bg-red-500 hover:bg-red-300 active:bg-red-200 h-fit w-fit px-5 py-1 rounded-md text-white' onClick={(e) => setModalVisible(true)}>Archive</button>
+        </div>
       </div>
+      
       <div className="flex justify-center container mx-auto gap-4 mt-3">
         <Link
           href={`${id}/buses?routeName=${encodeURIComponent(routeName)}`}
@@ -215,7 +246,7 @@ const page = () => {
           <div>Average Per Hour</div>
           {channel ? (
             <iframe
-              src={`https://api.thingspeak.com/channels/${channel.channelId}/charts/${channel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
+              src={`https://api.thingspeak.com/channels/${channel.channelId}/charts/${channel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto&yaxis=Number%20of%20Passengers&results=600`}
               className="w-full h-[250px] border"
               frameBorder="0"
               allowFullScreen
@@ -241,6 +272,32 @@ const page = () => {
           </div>
         </div>
       </div>
+
+       {/* Modal */}
+       {modalVisible && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-bold">Confirm Archive</h2>
+              <p>
+                Are you sure you want to archive {routeName} route?
+              </p>
+              <div className="mt-4 flex justify-end space-x-2">
+                <button
+                  onClick={() => setModalVisible(false)}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmArchive}
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 
