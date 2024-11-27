@@ -18,7 +18,7 @@ const Statistics = () => {
   return (
     <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
       <h2 className="text-center text-2xl font-semibold mb-8">
-        Statistics for Bus 1
+        Statistics
       </h2>
 
       <div className="flex flex-wrap justify-center gap-6">
