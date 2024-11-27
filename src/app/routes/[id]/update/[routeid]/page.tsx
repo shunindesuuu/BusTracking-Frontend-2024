@@ -250,7 +250,7 @@ const RouteForm: React.FC = () => {
         </div>
       )}
 
-      {page === 2 && <DrawRouteComponent onUpdateLatLngs={setLatlngs} color={routeColor} />}
+      {page === 2 && <DrawRouteComponent onUpdateLatLngs={setLatlngs} color={routeColor}  initialLatlngs={latlngs.length > 0 ? latlngs : undefined}/>}
 
       {/* Page 3: Dynamic Section Form */}
       {/* Page 3: Dynamic Section Form */}
