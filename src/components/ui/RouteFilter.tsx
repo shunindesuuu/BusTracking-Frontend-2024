@@ -19,7 +19,7 @@ const RouteFilter: React.FC<RouteFilterProps> = ({ onRouteSelect }) => {
     useEffect(() => {
         const fetchRoutes = async () => {
             try {
-                const response = await fetch('https://3.27.197.150:4000/routes/index');
+                const response = await fetch('https://54.253.121.220:4000/routes/index');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }

@@ -113,7 +113,7 @@ interface User {
   useEffect(() => {
     const fetchBus = async () => {
       try {
-        const response = await fetch(`https://3.27.197.150:4000/buses/${id}`);
+        const response = await fetch(`https://54.253.121.220:4000/buses/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -128,7 +128,7 @@ interface User {
         // Fetch the driver based on the driver's ID from the bus data
         if (result.driver) {
           const driverResponse = await fetch(
-            `https://3.27.197.150:4000/drivers/${result.driver.userId}`
+            `https://54.253.121.220:4000/drivers/${result.driver.userId}`
           );
           if (driverResponse.ok) {
             const driverData: User = await driverResponse.json();
@@ -144,7 +144,7 @@ interface User {
 
     const fetchBusLocChannel = async () => {
       try {
-        const response = await fetch(`https://3.27.197.150:4000/buses/get-loc-channel/${id}`);
+        const response = await fetch(`https://54.253.121.220:4000/buses/get-loc-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -163,7 +163,7 @@ interface User {
 
     const fetchBusPassChannel = async () => {
       try {
-        const response = await fetch(`https://3.27.197.150:4000/buses/get-pass-channel/${id}`);
+        const response = await fetch(`https://54.253.121.220:4000/buses/get-pass-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -180,7 +180,7 @@ interface User {
 
     const fetchDrivers = async () => {
       try {
-        const response = await fetch('https://3.27.197.150:4000/drivers/index');
+        const response = await fetch('https://54.253.121.220:4000/drivers/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -192,7 +192,7 @@ interface User {
     };
     const fetchRoutes= async () => {
       try {
-        const response = await fetch('https://3.27.197.150:4000/routes/index');
+        const response = await fetch('https://54.253.121.220:4000/routes/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -238,7 +238,7 @@ interface User {
     console.log(selectedDriver)
 
     try {
-      const response = await fetch(`https://3.27.197.150:4000/buses/update`, {
+      const response = await fetch(`https://54.253.121.220:4000/buses/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

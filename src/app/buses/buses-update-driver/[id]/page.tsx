@@ -77,7 +77,7 @@ const DriverForm: React.FC = () => {
     const fetchDriver = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://3.27.197.150:4000/drivers/${id}`);
+        const response = await fetch(`https://54.253.121.220:4000/drivers/${id}`);
         if (!response.ok) throw new Error('Failed to fetch driver data');
     
         const result: User = await response.json(); // Assuming 'result' conforms to User interface
@@ -100,7 +100,7 @@ const DriverForm: React.FC = () => {
 
     const fetchBuses = async () => {
       try {
-        const response = await fetch('https://3.27.197.150:4000/buses/index');
+        const response = await fetch('https://54.253.121.220:4000/buses/index');
         if (!response.ok) {
           throw new Error('Failed to fetch buses');
         }
@@ -131,7 +131,7 @@ const DriverForm: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`https://3.27.197.150:4000/drivers/update`, {
+      const response = await fetch(`https://54.253.121.220:4000/drivers/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -62,8 +62,8 @@ const BusesViewBuses: React.FC = () => {
   const fetchData = async () => {
     try {
       const [busesResponse, driversResponse] = await Promise.all([
-        fetch('https://3.27.197.150:4000/thingspeak/all-bus-passengers'), // Adjust the endpoint as needed
-        fetch('https://3.27.197.150:4000/drivers/index'), // Adjust the endpoint as needed
+        fetch('https://54.253.121.220:4000/thingspeak/all-bus-passengers'), // Adjust the endpoint as needed
+        fetch('https://54.253.121.220:4000/drivers/index'), // Adjust the endpoint as needed
       ]);
 
       if (!busesResponse.ok || !driversResponse.ok) {
@@ -104,7 +104,7 @@ const BusesViewBuses: React.FC = () => {
 
   const confirmArchive = async () => {
     try {
-      const response = await fetch(`https://3.27.197.150:4000/buses/archive/${selectedBus?.id}`);
+      const response = await fetch(`https://54.253.121.220:4000/buses/archive/${selectedBus?.id}`);
       console.log(selectedBus?.id)
 
       if (!response.ok) {

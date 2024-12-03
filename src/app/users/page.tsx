@@ -40,7 +40,7 @@ const Users = () => {
     if (selectedUser) {
       try {
         // Send POST request to update role
-        const response = await fetch("https://3.27.197.150:4000/users/update-role", {
+        const response = await fetch("https://54.253.121.220:4000/users/update-role", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const Users = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch('https://3.27.197.150:4000/users/index');
+        const response = await fetch('https://54.253.121.220:4000/users/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

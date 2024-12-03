@@ -75,7 +75,7 @@ const page = () => {
   useEffect(() => {
     const fetchBuses = async () => {
       try {
-        const response = await fetch(`https://3.27.197.150:4000/buses/index/route/${id}`);
+        const response = await fetch(`https://54.253.121.220:4000/buses/index/route/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -94,7 +94,7 @@ const page = () => {
 
     const fetchThingSpeakChannel = async () => {
       try {
-        const response = await fetch(`https://3.27.197.150:4000/thingspeak/channel/${id}`);
+        const response = await fetch(`https://54.253.121.220:4000/thingspeak/channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -170,7 +170,7 @@ const page = () => {
 
   const confirmArchive = async () => {
     try {
-      const response = await fetch(`https://3.27.197.150:4000/routes/archive/${id}`);
+      const response = await fetch(`https://54.253.121.220:4000/routes/archive/${id}`);
       console.log(response)
 
       if (!response.ok) {
