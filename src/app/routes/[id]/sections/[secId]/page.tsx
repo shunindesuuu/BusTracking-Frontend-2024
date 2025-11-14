@@ -27,7 +27,7 @@ interface Section {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/routes/get-section/${secId}`);  
+        const response = await fetch(`https://3.27.197.150:4000/routes/get-section/${secId}`);  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -63,7 +63,7 @@ interface Section {
           <div>Live Passenger Count</div>
           {section ? (
             <iframe
-              src={`https://api.thingspeak.com/channels/${section?.channelId}/charts/${section?.fieldNumber}?dynamic=true&width=auto&height=auto`}
+              src={`https://api.thingspeak.com/channels/${section?.channelId}/charts/${section?.fieldNumber}?dynamic=true&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
               className="w-full h-[250px] border" 
               frameBorder="0"
               allowFullScreen
@@ -77,7 +77,7 @@ interface Section {
           <div>Average Per Hour</div>
           {section ? (
             <iframe
-              src={`https://api.thingspeak.com/channels/${section.channelId}/charts/${section.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto`}
+              src={`https://api.thingspeak.com/channels/${section.channelId}/charts/${section.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
               className="w-full h-[250px] border"
               frameBorder="0"
               allowFullScreen
@@ -92,7 +92,7 @@ interface Section {
           <div className="w-full h-fit bg-gray-200 rounded-lg">
             {section ? (
               <iframe
-                src={`https://api.thingspeak.com/channels/${section?.channelId}/charts/${section?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day&width=auto&height=auto`}
+                src={`https://api.thingspeak.com/channels/${section?.channelId}/charts/${section?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
                 className="w-full h-[250px] border"
                 frameBorder="0"
                 allowFullScreen

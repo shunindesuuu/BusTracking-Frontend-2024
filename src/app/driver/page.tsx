@@ -1,9 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
-import DisplayMap from '@/components/ui/DisplayMap';
+// import DisplayMap from '@/components/ui/DisplayMap';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const DisplayMap = dynamic(
+  () => import('@/components/ui/DisplayMap'),
+  { ssr: false }
+);
 
 interface RouteNames {
   id: number;
@@ -34,7 +40,7 @@ const Driver = () => {
     const fetchRoutes = async () => {
       try {
         const response = await fetch(
-          'http://localhost:4000/routes/index/coordinates'
+          'https://3.27.197.150:4000/routes/index/coordinates'
         );
         if (!response.ok) {
           throw new Error('Network response was not ok');

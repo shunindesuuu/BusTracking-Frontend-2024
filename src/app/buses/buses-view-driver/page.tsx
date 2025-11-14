@@ -45,7 +45,6 @@ const BusesAssignDriver: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { data: session, status } = useSession();
 
   const handleBackClick = () => {
     router.push('/buses');
@@ -55,18 +54,23 @@ const BusesAssignDriver: React.FC = () => {
     router.push('/buses/buses-create-driver');
   };
 
-  useEffect(() => {
-    // Redirect if not admin
-    if (status === 'authenticated' && session.user?.role !== 'admin') {
-      router.push('/');
-    }
-  }, [status, session, router]);
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:4000/drivers/index');
+        const response = await fetch('https://3.27.197.150:4000/drivers/index');
         if (!response.ok) throw new Error('Network response was not ok');
         const usersResult: User[] = await response.json();
         setUsers(usersResult);
@@ -82,7 +86,6 @@ const BusesAssignDriver: React.FC = () => {
     }
   }, [status, session]);
 
-  if (status === 'loading') return null; // Wait for session status
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -96,13 +99,6 @@ const BusesAssignDriver: React.FC = () => {
             onClick={handleBackClick}
           >
             Back
-          </button>
-          <button
-            type="button"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            onClick={handleCreateClick}
-          >
-            Create Driver
           </button>
         </div>
 
@@ -151,13 +147,13 @@ const BusesAssignDriver: React.FC = () => {
                       {user.email}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.driver ? user.driver.bus.busName : 'N/A'}
+                      {user.driver && user.driver.bus ? user.driver.bus.busName : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.driver ? user.driver.bus.busNumber : 'N/A'}
+                      {user.driver && user.driver.bus ? user.driver.bus.busNumber : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
-                      {user.driver ? user.driver.bus.status : 'N/A'}
+                      {user.driver && user.driver.bus ? user.driver.bus.status : 'N/A'}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-500 text-sm text-black">
                       <Link

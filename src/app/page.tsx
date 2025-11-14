@@ -1,8 +1,14 @@
 'use client';
-import DisplayMap from '@/components/ui/DisplayMap';
+import dynamic from 'next/dynamic';
+// import DisplayMap from '@/components/ui/DisplayMap';
 import ProtectedComponent from '@/components/ui/ProtectedComponent';
 import RouteFilter from '@/components/ui/RouteFilter';
 import React, { useState } from 'react';
+
+const DisplayMap = dynamic(
+  () => import('@/components/ui/DisplayMap'),
+  { ssr: false }
+);
 
 export default function Home() {
   const [selectedRoute, setSelectedRoute] = useState('all');

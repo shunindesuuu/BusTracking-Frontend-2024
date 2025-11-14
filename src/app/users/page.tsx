@@ -5,17 +5,18 @@ import { redirect } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 const Users = () => {
-  // const { data: session, status } = useSession();
+  const { data: session, status } = useSession();
 
-  // if (status === 'loading') {
-  //   return null;
-  // }
-  // if (!session) {
-  //   redirect('/login');
-  // }
-  // if (session.user?.role !== 'admin') {
-  //   redirect('/');
-  // }
+  if (status === 'loading') {
+    return null;
+  }
+  if (!session) {
+    redirect('/login');
+  }
+  if (session.user?.role !== 'admin') {
+    redirect('/');
+  }
+
   interface User {
     id: string;
     name: string;
@@ -39,7 +40,7 @@ const Users = () => {
     if (selectedUser) {
       try {
         // Send POST request to update role
-        const response = await fetch("http://localhost:4000/users/update-role", {
+        const response = await fetch("https://3.27.197.150:4000/users/update-role", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -71,7 +72,7 @@ const Users = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:4000/users/index');
+        const response = await fetch('https://3.27.197.150:4000/users/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

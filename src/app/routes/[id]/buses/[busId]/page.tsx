@@ -39,7 +39,7 @@ const Page = () => {
     console.log(busId)
     const fetchBuses = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/thingspeak/bus-passenger/${busId}`);  
+        const response = await fetch(`https://3.27.197.150:4000/thingspeak/bus-passenger/${busId}`);  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -71,7 +71,7 @@ const Page = () => {
 
 
   return (
-    <div className="flex flex-col justify-center container mx-auto mt-16 p-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <div className="flex flex-col min-w-[320px] mx-auto mt-24 lg:mt-20 px-3 xs:px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         <div>{bus?.busName}</div>
       <div className="flex justify-center container mx-auto gap-4 mt-3">
       <div className="flex-grow flex-col h-20 bg-gray-100 flex items-center justify-center text-center rounded-md shadow-md hover:bg-gray-200 transition-all">
@@ -95,7 +95,7 @@ const Page = () => {
           <div>Live Passenger Count</div>
           {bus ? (
             <iframe
-              src={`https://api.thingspeak.com/channels/${bus.busChannel?.channelId}/charts/${bus.busChannel?.fieldNumber}?dynamic=true&width=auto&height=auto`}
+              src={`https://api.thingspeak.com/channels/${bus.busChannel?.channelId}/charts/${bus.busChannel?.fieldNumber}?dynamic=true&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
               className="w-full h-[250px] border" 
               frameBorder="0"
               allowFullScreen
@@ -109,7 +109,7 @@ const Page = () => {
           <div>Average Per Hour</div>
           {bus ? (
             <iframe
-              src={`https://api.thingspeak.com/channels/${bus.busChannel.channelId}/charts/${bus.busChannel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto`}
+              src={`https://api.thingspeak.com/channels/${bus.busChannel.channelId}/charts/${bus.busChannel.fieldNumber}?dynamic=true&average=60&title=Average%20Per%20Hour&width=auto&height=auto&yaxis=Number%20of%20Passengers&results=500`}
               className="w-full h-[250px] border"
               frameBorder="0"
               allowFullScreen
@@ -124,7 +124,7 @@ const Page = () => {
           <div className="w-full h-fit bg-gray-200 rounded-lg">
             {bus ? (
               <iframe
-                src={`https://api.thingspeak.com/channels/${bus.busChannel?.channelId}/charts/${bus.busChannel?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day&width=auto&height=auto`}
+                src={`https://api.thingspeak.com/channels/${bus.busChannel?.channelId}/charts/${bus.busChannel?.fieldNumber}?dynamic=true&average=daily&title=Average%20Per%20Day&width=auto&height=auto&yaxis=Number%20of%20Passengers`}
                 className="w-full h-[250px] border"
                 frameBorder="0"
                 allowFullScreen

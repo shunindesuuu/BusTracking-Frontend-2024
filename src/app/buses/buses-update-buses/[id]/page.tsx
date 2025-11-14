@@ -9,6 +9,11 @@ const BusForm: React.FC = () => {
   const params = useParams();
   const { id } = params;
 
+  interface Route {
+    id: string;
+    routeName: string;
+    routeColor: string
+  }
   // Bus Interface
   interface Bus {
     id: number;
@@ -17,7 +22,7 @@ const BusForm: React.FC = () => {
     capacity: number;
     status: string;
     driver: Driver | null; // Driver ID may be null if no driver is assigned
-    routeId: string;
+    route: Route;
   }
 
   // Interface for the Driver
@@ -64,19 +69,32 @@ interface User {
 
   const [capacity, setCapacity] = useState<number | ''>('');
   const [status, setStatus] = useState<string>('');
-  const [routeId, setRouteId] = useState<string>('');
+  const [routes, setRoutes] = useState<Route[]>([]);
 
   const [drivers, setDrivers] = useState<User[]>([]);
   const [selectedDriver, setSelectedDriver] = useState<User | null>(null); // Current selected driver
+  const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
+
+
   const [isDriverOpen, setIsDriverOpen] = useState(false);
+  const [isRouteOpen, setIsRouteOpen] = useState(false);
+
 
   const handleDriverButtonClick = () => {
     setIsDriverOpen(!isDriverOpen);
+  };
+  const handleRouteButtonClick = () => {
+    setIsRouteOpen(!isRouteOpen);
   };
 
   const handleDriverSelect = (driver: User) => {
     setSelectedDriver(driver);
     setIsDriverOpen(false);
+  };
+
+  const handleRouteSelect = (route: Route) => {
+    setSelectedRoute(route);
+    setIsRouteOpen(false);
   };
 
   const { data: session } = useSession();
@@ -95,7 +113,7 @@ interface User {
   useEffect(() => {
     const fetchBus = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/${id}`);
+        const response = await fetch(`https://3.27.197.150:4000/buses/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -105,12 +123,12 @@ interface User {
         setBusNumber(result.busNumber);
         setCapacity(result.capacity);
         setStatus(result.status);
-        setRouteId(result.routeId);
+        setSelectedRoute(result.route);
 
         // Fetch the driver based on the driver's ID from the bus data
         if (result.driver) {
           const driverResponse = await fetch(
-            `http://localhost:4000/drivers/${result.driver.userId}`
+            `https://3.27.197.150:4000/drivers/${result.driver.userId}`
           );
           if (driverResponse.ok) {
             const driverData: User = await driverResponse.json();
@@ -126,7 +144,7 @@ interface User {
 
     const fetchBusLocChannel = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/get-loc-channel/${id}`);
+        const response = await fetch(`https://3.27.197.150:4000/buses/get-loc-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -145,7 +163,7 @@ interface User {
 
     const fetchBusPassChannel = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/buses/get-pass-channel/${id}`);
+        const response = await fetch(`https://3.27.197.150:4000/buses/get-pass-channel/${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -162,7 +180,7 @@ interface User {
 
     const fetchDrivers = async () => {
       try {
-        const response = await fetch('http://localhost:4000/drivers/index');
+        const response = await fetch('https://3.27.197.150:4000/drivers/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -172,7 +190,20 @@ interface User {
         setError((error as Error).message);
       }
     };
+    const fetchRoutes= async () => {
+      try {
+        const response = await fetch('https://3.27.197.150:4000/routes/index');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result: Route[] = await response.json();
+        setRoutes(result);
+      } catch (error) {
+        setError((error as Error).message);
+      }
+    };
 
+    fetchRoutes();
     fetchBusLocChannel();
     fetchBusPassChannel();
     fetchDrivers();
@@ -199,15 +230,15 @@ interface User {
       toast.error('Please enter the bus status');
       return;
     }
-    if (!routeId.trim()) {
-      toast.error('Please enter a route ID');
-      return;
-    }
+    // if (!routeId.trim()) {
+    //   toast.error('Please enter a route ID');
+    //   return;
+    // }
 
     console.log(selectedDriver)
 
     try {
-      const response = await fetch(`http://localhost:4000/buses/update`, {
+      const response = await fetch(`https://3.27.197.150:4000/buses/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +255,7 @@ interface User {
           busPassengerChannel,
           fieldNumber,
           userId: selectedDriver ? selectedDriver.id : null, // Send the selected driver ID
-          routeId,
+          routeId: selectedRoute? selectedRoute.id: null  ,
 
         }),
       });
@@ -472,14 +503,46 @@ interface User {
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="routeId">Route ID</label>
-            <input
-              id="routeId"
-              placeholder="e.g. 1"
-              value={routeId}
-              onChange={(e) => setRouteId(e.target.value)}
-              className="h-fit w-fit p-2 border-2 rounded-md"
-            />
+            <label htmlFor="routeId">Current Route</label>
+            <div className="relative inline-block text-left">
+              <button
+                type="button"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleRouteButtonClick}
+              >
+                {selectedRoute
+                  ? `Current Route: ${selectedRoute.routeName}`
+                  : 'Select Route'}
+              </button>
+
+              {isRouteOpen && (
+                <div className="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    {loading && (
+                      <div className="px-4 py-2 text-sm text-gray-700">
+                        Loading...
+                      </div>
+                    )}
+                    {error && (
+                      <div className="px-4 py-2 text-sm text-red-600">
+                        {error}
+                      </div>
+                    )}
+                    {!loading &&
+                      !error &&
+                      routes.map((route) => (
+                        <div
+                          key={route.id}
+                          onClick={() => handleRouteSelect(route)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        >
+                          {`${route.routeName}`}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

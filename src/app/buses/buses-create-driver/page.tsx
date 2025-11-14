@@ -52,7 +52,7 @@ const CreateDriver: React.FC = () => {
   useEffect(() => {
     const fetchBuses = async () => {
       try {
-        const response = await fetch('http://localhost:4000/buses/index');
+        const response = await fetch('https://3.27.197.150:4000/buses/index');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -100,7 +100,7 @@ const CreateDriver: React.FC = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:4000/drivers/create', {
+      const response = await fetch('https://3.27.197.150:4000/drivers/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

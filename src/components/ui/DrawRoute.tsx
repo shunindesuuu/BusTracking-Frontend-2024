@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L, { LatLngExpression, LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import dynamic from 'next/dynamic';
 
 interface DrawRouteProps {
   onUpdateLatLngs: (latlngs: { pointOrder: number; latitude: number; longitude: number }[]) => void;
